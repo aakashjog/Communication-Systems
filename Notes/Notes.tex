@@ -1,0 +1,473 @@
+\documentclass[titlepage, fleqn, a4paper, 12pt, twoside]{article}
+\usepackage{geometry}
+\usepackage{exsheets} %question and solution environments
+\usepackage{amsmath, amssymb, amsthm} %standard AMS packages
+\usepackage[utf8]{inputenc}
+\usepackage{esint} %integral signs
+\usepackage{marginnote} %marginnotes
+\usepackage{gensymb} %miscellaneous symbols
+\usepackage{commath} %differential symbols
+\usepackage{xcolor} %colours
+\usepackage{cancel} %cancelling terms
+\usepackage[free-standing-units,space-before-unit]{siunitx} %formatting units
+	\sisetup
+	{
+		per-mode=fraction,
+		fraction-function=\frac
+	}
+\usepackage{tikz, pgfplots} %diagrams
+	\usetikzlibrary{calc, hobby, patterns, intersections, angles, quotes, spy}
+\usepackage{graphicx} %inserting graphics
+\usepackage{hyperref} %hyperlinks
+\usepackage{datetime} %date and time
+\usepackage{enumerate, enumitem} %numbered lists
+\usepackage{float} %inserting floats
+\usepackage[american voltages]{circuitikz} %circuit diagrams
+\usepackage{setspace} %double spacing
+\usepackage{microtype} %micro-typography
+\usepackage{listings} %formatting code
+	\lstset{language=Matlab}
+	\lstdefinestyle{standardMatlab}
+	{
+		belowcaptionskip=1\baselineskip,
+		breaklines=true,
+		frame=L,
+		xleftmargin=\parindent,
+		language=C,
+		showstringspaces=false,
+		basicstyle=\footnotesize\ttfamily,
+		keywordstyle=\bfseries\color{green!40!black},
+		commentstyle=\itshape\color{purple!40!black},
+		identifierstyle=\color{blue},
+		stringstyle=\color{orange},
+	}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{todonotes}
+\usepackage[noabbrev,capitalize]{cleveref}
+\usepackage[section]{placeins}
+\usepackage[style=numeric, backend=biber]{biblatex}
+
+% \bibliography{<mybibfile>}% ONLY selects .bib file; syntax for version <= 1.1b
+\addbibresource{bibliography.bib}% Syntax for version >= 1.2
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}} %adds numbers to specific equations in non-numbered list of equations
+
+\DeclareMathAlphabet{\mathcal}{OT1}{pzc}{m}{it}
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{law}{Law}
+
+\makeatletter
+\@addtoreset{section}{part} %resets section numbers in new part
+\makeatother
+
+\newcommand\blfootnote[1]{%
+	\begingroup
+	\renewcommand\thefootnote{}\footnote{#1}%
+	\addtocounter{footnote}{-1}%
+	\endgroup
+}
+
+\renewcommand{\marginfont}{\scriptsize \color{blue}}
+
+\renewcommand{\tilde}{\widetilde}
+
+\def\doubleunderline#1{\underline{\underline{#1}}}
+
+\SetupExSheets{solution/print = true} %prints all solutions by default
+
+\DeclareMathOperator{\FT}{\mathcal{F}}
+\DeclareMathOperator{\IFT}{\mathcal{F}^{-1}}
+\DeclareMathOperator{\LT}{\mathcal{L}}
+
+\DeclareMathOperator{\sinc}{\mathrm{sinc}}
+\DeclareMathOperator{\rect}{\mathrm{rect}}
+
+%opening
+\title{Communication Systems}
+\author{Aakash Jog}
+\date{2016-17}
+
+\begin{document}
+
+\pagenumbering{roman}
+\begin{titlepage}
+\newgeometry{margin=0cm}
+\maketitle
+\end{titlepage}
+\restoregeometry
+%\setlength{\mathindent}{0pt}
+
+\blfootnote
+{
+	\begin{figure}[H]
+		\includegraphics[height = 12pt]{cc.pdf}
+		\includegraphics[height = 12pt]{by.pdf}
+		\includegraphics[height = 12pt]{nc.pdf}
+		\includegraphics[height = 12pt]{sa.pdf}
+	\end{figure}
+	This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit \url{http://creativecommons.org/licenses/by-nc-sa/4.0/}.
+} %CC-BY-NC-SA license
+
+\tableofcontents
+
+\clearpage
+\section{Lecturer Information}
+
+\textbf{Prof. Arie Yeredor}\\
+~\\
+Office: Maabadot 121\\
+E-mail: \href{mailto:arie@eng.tau.ac.il}{arie@eng.tau.ac.il}\\
+Tel: \href{tel:+97236405314}{+972 3 640 5314}\\
+
+\section{Instructor Information}
+
+\textbf{Amir Weiss}\\
+~\\
+Office: Tochna 309\\
+E-mail: \href{mailto:amirwei2@mail.tau.ac.il}{amirwei2@mail.tau.ac.il}\\
+Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
+
+\section{Recommended Reading}
+
+\begin{enumerate}
+	\item \fullcite{Couch}
+	\item \fullcite{Carlson}
+	\item \fullcite{Haykin}
+	\item \fullcite{HaykinMoher}
+	\item \fullcite{Proakis}
+	\item \fullcite{Lee}
+\end{enumerate}
+
+\clearpage
+\pagenumbering{arabic}
+
+\part{Basic Definitions and Theorems}
+
+\section{Types of Communication}
+
+\begin{definition}[Digital communication]
+	Communication is said to be digital communication if the source can send only one of the predefined messages.
+	Usually, the predefined messages are binary, i.e. $0$ or $1$.
+	\label{def:digital_communication}
+\end{definition}
+
+\begin{definition}[Analogue communication]
+	Communication is said to be analogue communication if the source can send one of infinite number of messages.
+	\label{def:analogue_communication}
+\end{definition}
+
+\section{Periodicity and Finite Energy}
+
+\begin{definition}[Finite energy signal]
+	A signal $x(t)$ is said to have finite energy if
+	\begin{align*}
+		\int\limits_{-\infty}^{\infty} \left| x(t) \right|^2 \dif t &< \infty
+	\end{align*}
+	\label{def:finite_energy_signal}
+\end{definition}
+
+\begin{definition}[Periodic signal]
+	A signal $x(t)$ is said to be $T_0$-periodic if for all $t$,
+	\begin{align*}
+		x(t + T_0) &= x(t)
+	\end{align*}
+	\label{def:periodic_signal}
+\end{definition}
+
+\section{Fourier Series Representation}
+
+\begin{theorem}[Fourier series representation]
+	A $T_0$-periodic signal $x(t)$ can be expressed as a Fourier series
+	\begin{align*}
+		x(t) &= \sum\limits_{k = -\infty}^{\infty} a_k e^{j k \omega_0 t}
+	\end{align*}
+	where
+	\begin{align*}
+		\omega_0 &= \frac{2 \pi}{T_0}
+	\end{align*}
+	and
+	\begin{align*}
+		a_k &= \frac{1}{T_0} \int\limits_{T_0} x(t) e^{-j k \omega_0 t} \dif t
+	\end{align*}
+	\label{thm:Fourier_series_representation}
+\end{theorem}
+
+\section{Fourier Transform}
+
+\begin{theorem}[Time and frequency domain expressions]
+	A finite energy signal $x(t)$ can be expressed in frequency domain such that
+	\begin{align*}
+		X(\omega) &= \FT\left\{ x(t) \right\}\\
+		&= \int\limits_{-\infty}^{\infty} x(t) e^{j \omega t} \dif t\\
+		x(t) &= \IFT\left\{ X(\omega) \right\}\\
+		&= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} X(\omega) e^{j \omega t} \dif \omega
+	\end{align*}
+	\label{thm:time_and_frequency_domain_expressions}
+\end{theorem}
+
+\begin{theorem}[Linearity of Fourier transform]
+	The Fourier transform is linear, i.e.
+	\begin{align*}
+		y(t) &= a_1 x_1(t) + a_2 x_2(t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= a_1 X_1(\omega) + a_2 X_2(\omega)
+	\end{align*}
+	\label{thm:linearity_of_fourier_transform}
+\end{theorem}
+
+\begin{theorem}[Time shift]
+	A time delay corresponds to multiplication by a tone in frequency domain, i.e.
+	\begin{align*}
+		y(t) &= x(t - \tau)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= e^{-j \omega \tau} X(\omega)
+	\end{align*}
+	\label{thm:time_shift}
+\end{theorem}
+
+\begin{theorem}[Frequency shift]
+	A shift in frequency corresponds to a tone in time domain, i.e.
+	\begin{align*}
+		y(t) &= e^{j \omega_0 t} x(t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= X(\omega - \omega_0)
+	\end{align*}
+	\label{thm:frequency_shift}
+\end{theorem}
+
+\begin{theorem}[Time reversal]
+	A reversal in time corresponds to a reversal in frequency, i.e.
+	\begin{align*}
+		y(t) &= x(-t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= X(-\omega)
+	\end{align*}
+	\label{thm:time_reversal}
+\end{theorem}
+
+\begin{theorem}[Time conjugation]
+	A conjugation in time corresponds to a conjugation and a reversal in frequency, i.e.
+	\begin{align*}
+		y(t) &= x^*(t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= X^*(-\omega)
+	\end{align*}
+	\label{thm:time_conjugation}
+\end{theorem}
+
+\begin{theorem}[Time conjugation]
+	A conjugation and a reversal in time corresponds to a conjugation in frequency, i.e.
+	\begin{align*}
+		y(t) &= x^*(-t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= X^*(\omega)
+	\end{align*}
+	\label{thm:time_conjugation}
+\end{theorem}
+
+\begin{theorem}[Convolution in time]
+	A convolution in time corresponds to multiplication in frequency, i.e.
+	\begin{align*}
+		y(t) &= h(t) \ast x(t)\\
+		&= \int\limits_{-\infty}^{\infty} h(\tau) x(t - \tau) \dif \tau
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= H(\omega) X(\omega)
+	\end{align*}
+	\label{thm:convolution_in_time}
+\end{theorem}
+
+\begin{theorem}[Multiplication in time]
+	A multiplication in time corresponds to convolution in frequency, i.e.
+	\begin{align*}
+		y(t) &= c(t) x(t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= \frac{1}{2 \pi} C(\omega) X(\omega)\\
+		&= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} C(\sigma) X(\omega - \sigma) \dif \sigma
+	\end{align*}
+	\label{them:multiplication_in_time}
+\end{theorem}
+
+\begin{definition}[Dirac delta function]
+	The Dirac delta function is defined to be $\delta(t)$ such that for $a < b$,
+	\begin{align*}
+		\int\limits_{a}^{b} \delta(t) \dif t &=
+			\begin{cases}
+				1 &;\quad a < 0 < b\\
+				0 &;\quad \text{otherwise}\\
+			\end{cases}
+	\end{align*}
+	Hence, the value of the function for non-zero values of $t$ may or may not be zero, but the integral of the function over any interval which excludes zero is $1$.
+	Hence, for all non-zero values of $t$, the function may have rapid oscillations.\\
+	For example, the delta function expressed as a limiting case of a Gaussian is zero at all non-zero point and infinite at zero, while the delta function expressed as a limiting case of a sinc function has rapid oscillations at non-zero points.
+	\label{thm:Dirac_delta_function}
+\end{definition}
+
+\begin{theorem}[Dirac delta in time]
+	A Dirac delta in time corresponds to a constant $1$ in frequency, i.e.
+	\begin{align*}
+		x(t) &= \delta(t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		X(\omega) &= 1
+	\end{align*}
+	\label{thm:Dirac_delta_in_time}
+\end{theorem}
+
+\begin{definition}[Rectangular pulse function]
+	\begin{align*}
+		\rect(t) &=
+			\begin{cases}
+				1 &;\quad |t| \le \frac{1}{2}\\
+				0 &;\quad |t| > \frac{1}{2}\\
+			\end{cases}
+	\end{align*}
+	\label{def:rect_function}
+\end{definition}
+
+\begin{definition}[Sinc function]
+	\begin{align*}
+		\sinc(t) &=
+			\begin{cases}
+				1 &;\quad t = 0\\
+				\frac{\sin(t)}{t} &;\quad t \neq 0\\
+			\end{cases}
+	\end{align*}
+	\label{def:sinc_function}
+\end{definition}
+
+\begin{theorem}[Dirac delta in frequency]
+	A Dirac in frequency corresponds to a constant $1$ in time, i.e.
+	\begin{align*}
+		x(t) &= 1
+	\end{align*}
+	if and only if
+	\begin{align*}
+		X(\omega) &= 2 \pi \delta(\omega)
+	\end{align*}
+	\label{thm:Dirac_delta_in_frequency}
+\end{theorem}
+
+\begin{proof}
+	Let
+	\begin{align*}
+		y(t) &= \rect\left( \frac{t}{T_0} \right)
+	\end{align*}
+	Hence,
+	\begin{align*}
+		Y(\omega) &= \frac{2}{\omega} \sin\left( \omega \frac{T_0}{2} \right)\\
+		&= T_0 \sinc\left( \omega \frac{T_0}{2} \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x(t) &= \lim\limits_{T_0 \to \infty} y(t)
+	\end{align*}
+	Hence,
+	\begin{align*}
+		X(\omega) &= \lim\limits_{T_0 \to \infty} Y(\omega)\\
+		&= c \delta(\omega)
+	\end{align*}
+	where $c$ is a constant.\\
+	Also,
+	\begin{align*}
+		x(0) &= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} X(\omega) \dif \omega
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		1 &= x(0)\\
+		&= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} c \delta(\omega) \dif \omega\\
+		&= \frac{c}{2 \pi}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		c &= 2 \pi
+	\end{align*}
+	Hence,
+	\begin{align*}
+		X(\omega) &= 2 \pi \delta(\omega)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}[Fourier transform in terms of temporal frequency]
+	\begin{align*}
+		\tilde{X}(f) &= X(\omega) \Big|_{\omega = 2 \pi f}
+	\end{align*}
+	Hence,
+	\begin{align*}
+		\tilde{X}(f) &= \int\limits_{-\infty}^{\infty} x(t) e^{-j 2 \pi f t} \dif t\\
+		x(t) &= \int\limits_{-\infty}^{\infty} \tilde{X}(f) e^{j 2 \pi f t} \dif f
+	\end{align*}
+	\label{thm:Fourier_transform_in_terms_of_temporal_frequency}
+\end{theorem}
+
+\begin{theorem}[Impulse train in time]
+	An impulse train in time corresponds to an impulse train in frequency, i.e.
+	\begin{align*}
+		x(t) &= \sum\limits_{n = -\infty}^{\infty} \delta(t - n T_0)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		X(\omega) &= \frac{2 \pi}{T_0} \sum\limits_{k = -\infty}^{\infty} \delta\left( \omega - \frac{2 \pi}{T_0} k \right)
+	\end{align*}
+	\label{thm:impulse_train_in_time}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		x(t) &= \sum\limits_{k = -\infty}^{\infty} a_k e^{j \omega_0 k t}
+	\end{align*}
+	where
+	\begin{align*}
+		a_k &= \frac{1}{T_0} \int\limits_{-\frac{T_0}{2}}^{\frac{T_0}{2}} x(t) e^{-j \omega_0 k t} \dif t\\
+		&= \frac{1}{T_0} \int\limits_{-\frac{T_0}{2}}^{\frac{T_0}{2}} \delta(t) e^{-j \omega_0 k t} \dif t\\
+		&= \frac{1}{T_0}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x(t) &= \frac{1}{T_0} \sum\limits_{k = -\infty}^{\infty} e^{j \omega_0 k t}\\
+	\end{align*}
+	Hence,
+	\begin{align*}
+		X(\omega) &= \frac{1}{T_0} \sum\limits_{k = -\infty}^{\infty} 2 \pi \delta(\omega - k \omega_0)\\
+		&= \frac{2 \pi}{T_0} \sum\limits_{k = -\infty}^{\infty} \delta\left( \omega - \frac{2 \pi}{T_0} k \right)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}[Sampling in time]
+	A sampling in time corresponds to replication in frequency, i.e.
+	\begin{align*}
+		y(t) &= x(t) \sum\limits_{n = -\infty}^{\infty} \delta(t - n T_0)\\
+		&= \sum\limits_{n = -\infty}^{\infty} x(n T_0) \delta(t - n T_0)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		Y(\omega) &= X(\omega) \ast \sum\limits_{k = -\infty}^{\infty} \frac{2 \pi}{T_0} \delta\left( \omega - \frac{2 \pi}{T_0} k \right)\\
+		&= \frac{1}{T_0} \sum\limits_{k = -\infty}^{\infty} X\left( \omega - \frac{2 \pi}{T_0} k \right)
+	\end{align*}
+	\label{thm:sampling_in_time}
+\end{theorem}
+
+\end{document}
