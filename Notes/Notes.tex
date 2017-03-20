@@ -82,6 +82,18 @@
 
 \SetupExSheets{solution/print = true} %prints all solutions by default
 
+\DeclareMathOperator{\cdf}{\mathrm{F}}
+\DeclareMathOperator{\pdf}{\mathrm{f}}
+
+\DeclareMathOperator{\prob}{\mathrm{P}}
+
+\DeclareMathOperator{\expct}{\mathrm{E}}
+
+\DeclareMathOperator{\var}{\mathrm{V}}
+\DeclareMathOperator{\sd}{\mathrm{\sigma}}
+
+\DeclareMathOperator{\cov}{\mathrm{Cov}}
+
 \DeclareMathOperator{\FT}{\mathcal{F}}
 \DeclareMathOperator{\IFT}{\mathcal{F}^{-1}}
 \DeclareMathOperator{\LT}{\mathcal{L}}
@@ -272,7 +284,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\label{thm:time_conjugation}
 \end{theorem}
 
-\begin{theorem}[Time conjugation]
+\begin{theorem}[Time conjugation and reversal]
 	A conjugation and a reversal in time corresponds to a conjugation in frequency, i.e.
 	\begin{align*}
 		y(t) &= x^*(-t)
@@ -469,5 +481,408 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\end{align*}
 	\label{thm:sampling_in_time}
 \end{theorem}
+
+\section{Stochastic Signals}
+
+\begin{definition}[Mean of stochastic signal]
+	Let $x(t)$ be a sample function of a random process.
+	The mean of $x(t)$ is defined to be
+	\begin{align*}
+		\tilde{\eta}_X(t) &= \expct\left[ x(t) \right]
+	\end{align*}
+\end{definition}
+
+\begin{definition}[Autocorrelation function of stochastic signal]
+	Let $x(t)$ be a sample function of a random process.
+	The autocorrelation function of $x(t)$ is defined to be
+	\begin{align*}
+		\tilde{R}_{X X}(t_1,t_2) &= \expct\left[ x(t_1) x^*(t_2) \right]
+	\end{align*}
+\end{definition}
+
+\begin{theorem}
+	For a real stochastic signal $x(t)$,
+	\begin{align*}
+		\tilde{R}_{X X}(t_1,t_2) &= \tilde{R}_{X X}(t_2,t_1)
+	\end{align*}
+\end{theorem}
+
+\begin{definition}[Wide sense stationary random process]
+	A random process $X$ is said to be wide sense stationary if
+	\begin{align*}
+		\tilde{\eta}_X(t) &= \eta_X\\
+		\tilde{R}_{X X}(t_1,t_2) &= R_{X X}(t_1 - t_2)
+	\end{align*}
+	that is, the mean is independent of time and the autocorrelation function is dependent on the time difference only and is independent of absolute time.
+\end{definition}
+
+\begin{theorem}
+	For a WSS random process $X$,
+	\begin{align*}
+		R_{X X}(\tau) &= {R_{X X}}^*(-\tau)
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		R_{X X}(-\tau) &= \expct\left[ x(t - \tau) x^*(t) \right]\\
+		&= \expct\left[ x^*(t) x(t - \tau) \right]\\
+		&= \expct\left[ x(t) x(t - \tau) \right]^*\\
+		&= {R_{X X}}^*(\tau)
+	\end{align*}
+\end{proof}
+
+\begin{definition}[Spectrum of WSS random process]
+	\begin{align*}
+		S_{X X}(\omega) &= \int\limits_{-\infty}^{\infty} R_{X X}(\tau) e^{-j \omega \tau} \dif \tau
+	\end{align*}
+\end{definition}
+
+
+\begin{theorem}
+	The spectrum of a random process is the mean of the squared absolute value of the Fourier transform of a long enough segment of a sample function of the process, normalized by the length of the segment, i.e.
+	\begin{align*}
+		S_{X X}(\omega) &= \lim\limits_{T \to \infty} \frac{1}{T} \expct\left[ \left| \int\limits_{0}^{T} x(t) e^{-j \omega t} \dif t \right| \right]
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	Let $x(t)$ be a sample function of a WSS random process.
+	As $R_{X X}(0) = \expct\left[ \left| x(t) \right|^2 \right]$ is constant irrespective of the absolute time, the signal $x(t)$ never converges.
+	Therefore, it is not a finite energy signal and hence does not have a Fourier transform.\\
+	Hence, let
+	\begin{align*}
+		X_T(\omega) &= \int\limits_{0}^{T} x(t) e^{-j \omega t} \dif t
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\frac{1}{T} \expct\left[ \left| X_T(\omega) \right|^2 \right] &= \frac{1}{T} \expct\left[ \int\limits_{0}^{T} x(t_1) e^{-j \omega t_1} \dif t_1 \int\limits_{0}^{T} x^*(t_2) e^{j \omega t_2} \dif t_2 \right]\\
+		&= \frac{1}{T} \int\limits_{0}^{T} \int\limits_{0}^{T} \expct\left[ x(t_1) x^*(t_2) \right] e^{-j \omega t_1} e^{j \omega t_2} \dif t_1 \dif t_2\\
+		&= \frac{1}{T} \int\limits_{0}^{T} \int\limits_{0}^{T} {\tilde{R}_{X X}}(t_1,t_2) e^{-j \omega t_1} e^{j \omega t_2} \dif t_1 \dif t_2\\
+		&= \frac{1}{T} \int\limits_{0}^{T} \int\limits_{0}^{T} R_{X X}(t_1 - t_2) e^{-j \omega (t_1 - t_2)} \dif t_1 \dif t_2
+	\end{align*}
+	Let
+	\begin{align*}
+		\tau &= t_1 - t_2\\
+		\sigma &= t_1 + t_2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+			\begin{pmatrix}
+				\tau\\
+				\sigma\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				1 & -1\\
+				1 & 1\\
+			\end{pmatrix}
+			\begin{pmatrix}
+				t_1\\
+				t_2\\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\left| \dpd{(\tau,\sigma)}{(t_1,t_2)} \right| &= 2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\frac{1}{T} \expct\left[ \left| X_T(\omega) \right|^2 \right] &= \frac{1}{T} \int\limits_{-T}^{T} \int\limits_{|\tau|}^{2 T - |\tau|} R_{X X}(\tau) e^{-j \omega \tau} \frac{1}{2} \dif \sigma \dif \tau\\
+		&= \int\limits_{-T}^{T} R_{X X}(\tau) e^{-j \omega \tau} \frac{1}{T} \int\limits_{|\tau|}^{2 T - |\tau|} \dif \sigma \dif \tau \frac{1}{2}\\
+		&= \frac{-T}{T} R_{X X}(\tau) e^{-j \omega \tau} \frac{1}{2} \left( \frac{2 T - 2 |\tau|}{2} \right) \dif \tau\\
+		&= \int\limits_{-T}^{T} R_{X X}(\tau) e^{-j \omega \tau} \left( 1 - \frac{|\tau|}{T} \right) \dif \tau\\
+		&= \int\limits_{-\tau}^{\tau} R_{X X}(\tau) e^{-j \omega \tau} \dif \tau - \frac{1}{T} \int\limits_{-\tau}^{\tau} |\tau| R_{X X}(\tau) e^{-j \omega \tau} \dif \tau
+	\end{align*}
+	Therefore, assuming the Ergodicity condition $\int\limits_{-\infty}^{\infty} \left| \tau R_{X X}(\tau) \right| \dif \tau < M < \infty$,
+	\begin{align*}
+		\lim\limits_{T \to \infty} \frac{1}{T} \expct\left[ \left| X_T(\omega) \right|^2 \right] &= \lim\limits_{T \to \infty} \int\limits_{-\tau}^{\tau} R_{X X}(\tau) e^{-j \omega \tau} \dif \tau - \frac{1}{T} \int\limits_{-\tau}^{\tau} |\tau| R_{X X}(\tau) e^{-j \omega \tau} \dif \tau\\
+		&= \int\limits_{-\infty}^{\infty} R_{X X}(\tau) e^{-j \omega \tau} \dif \tau\\
+		&= S_{X X}(\omega)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}
+	\begin{align*}
+		S_{X X}(\omega) &\ge 0
+	\end{align*}
+	for all $\omega$.
+	\label{thm:non_negativity_of_spectrum}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		S_{X X}(\omega) &= \lim\limits_{T \to \infty} \frac{1}{T} \expct\left[ \left| X_T(\omega) \right|^2 \right]\\
+		&\ge 0
+	\end{align*}
+\end{proof}
+
+\begin{theorem}[Time shift for stochastic signal]
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	Then,
+	\begin{align*}
+		y(t) &= x(t - t_0)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(\omega)
+	\end{align*}
+	\label{thm:time_shift_for_stochastic_signal}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		R_{Y Y}(\tau) &= \expct\left[ y(t + \tau) y^*(t) \right]\\
+		&= \expct\left[ x(t - t_0 + \tau) x^*(t - t_0) \right]\\
+		&= R_{X X}(\tau)
+	\end{align*}
+	Hence,
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(\omega)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}[Frequency shift for stochastic signal]
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	Then
+	\begin{align*}
+		y(t) &= x(t) e^{j \omega_0 t}
+	\end{align*}
+	if and only if
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(\omega - \omega_0)
+	\end{align*}
+	\label{thm:frequency_shift_for_stochastic_signal}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		R_{Y Y}(\tau) &= \expct\left[ y(t + \tau) y^*(t) \right]\\
+		&= \expct\left[ x(t + \tau) e^{j \omega_0 (t + \tau)} x^*(t) e^{-j \omega_0 t} \right]\\
+		&= e^{j \omega_0 \tau} \expct\left[ x(t + \tau) x^*(t) \right]\\
+		&= e^{j \omega_0 \tau} R_{X X}(\tau)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(\omega - \omega_0)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}[Time reversal for stochastic signal]
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	Then
+	\begin{align*}
+		y(t) &= x(-t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(-\omega)
+	\end{align*}
+	\label{thm:time_reversal_for_stochastic_signal}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		R_{Y Y}(\tau) &= \expct\left[ y(t + \tau) y^*(t) \right]\\
+		&= \expct\left[ x(-t - \tau) x^*(-t) \right]\\
+		&= R_{X X}(-\tau)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(-\omega)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}[Time conjugation for stochastic signal]
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	Then
+	\begin{align*}
+		y(t) &= x^*(t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(-\omega)
+	\end{align*}
+	\label{thm:time_reversal_for_stochastic_signal}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		R_{Y Y}(\tau) &= \expct\left[ y(t + \tau) y^*(t) \right]\\
+		&= \expct\left[ x^*(t + \tau) x(t) \right]\\
+		&= R_{X X}(-\tau)\\
+	\end{align*}
+	Equivalently,
+	\begin{align*}
+		R_{Y Y}(\tau) &= {R_{X X}}^*(\tau)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(-\omega)
+	\end{align*}
+	and
+	\begin{align*}
+		S_{Y Y}(\omega) &= {S_{X X}}^*(-\omega)
+	\end{align*}
+	This is consistent with \cref{thm:non_negativity_of_spectrum}.
+\end{proof}
+
+\begin{theorem}[Time conjugation and reversal for stochastic signal]
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	Then
+	\begin{align*}
+		y(t) &= x^*(-t)
+	\end{align*}
+	if and only if
+	\begin{align*}
+		S_{Y Y}(\omega) &= S_{X X}(\omega)
+	\end{align*}
+	\label{thm:time_reversal_for_stochastic_signal}
+\end{theorem}
+
+\begin{theorem}[Convolution in time for stochastic signal]
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	\begin{align*}
+		y(t) &= h(t) \ast x(t)\\
+		&= \int\limits_{-\infty}^{\infty} h(\mu) x(t - \mu) \dif \mu
+	\end{align*}
+	if and only if
+	\begin{align*}
+		S_{Y Y}(\omega) &= \left| H(\omega) \right|^2 S_{X X}(\omega)
+	\end{align*}
+	\label{thm:convolution_in_time_for_stochastic_signal}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		R_{Y Y}(\tau) &= \expct\left[ y(t + \tau) y^*(t) \right]\\
+		&= \expct\left[ \int\limits_{-\infty}^{\infty} h(\mu) x(t + \tau - \mu) \dif \mu \int\limits_{-\infty}^{\infty} h^*(\sigma) x^*(t - \sigma) \dif \sigma \right]\\
+		&= \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} h(\mu) h^*(\sigma) \expct\left[ x(t + \tau - \mu) x^*(t - \sigma) \right] \dif \mu \dif \sigma\\
+		&= \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} h(\mu) h^*(\sigma) R_{X X}(t - \mu + \sigma) \dif \mu \dif \sigma
+	\end{align*}
+	Let
+	\begin{align*}
+		\alpha &= \mu - \sigma\\
+		\beta &= \mu
+	\end{align*}
+	Therefore,
+	\begin{align*}
+			\begin{pmatrix}
+				\alpha\\
+				\beta\\
+			\end{pmatrix}
+		&=
+			\begin{pmatrix}
+				1 & -1\\
+				1 & 0\\
+			\end{pmatrix}
+			\begin{pmatrix}
+				\mu\\
+				\sigma\\
+			\end{pmatrix}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\left| \dpd{(\alpha,\beta)}{(\mu,\sigma)} \right| &= 1
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		R_{Y Y}(\tau) &= \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} h(\beta) h^*(\beta - \alpha) R_{X X}(\tau - \alpha) \dif \alpha \dif \beta
+	\end{align*}
+	Let
+	\begin{align*}
+		g(\alpha) &= \int\limits_{-\infty}^{\infty} h(\beta) h^*(\beta - \alpha) \dif \beta R_{X X}(\tau - \alpha) \dif \alpha
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		S_{Y Y}(\omega) &= G(\omega) S_{X X}(\omega)
+	\end{align*}
+	Additionally, let
+	\begin{align*}
+		g(\alpha) &= \int\limits_{-\infty}^{\infty} h(\beta) \overline{h}(\alpha - \beta) \dif \beta
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		G(\omega) &= H(\omega) \overline{H}(\omega)
+	\end{align*}
+	Hence, by the two definitions of $g(\alpha)$,
+	\begin{align*}
+		\overline{h}(\tau) &= h^*(-\tau)\\
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\overline{H}(\omega) &= H^*(\omega)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		G(\omega) &= H(\omega) H^*(\omega)\\
+		&= \left| H(\omega) \right|^2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		S_{Y Y}(\omega) &= \left| H(\omega) \right|^2 S_{X X}(\omega)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}[Multiplication in time for stochastic signal]
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	Let $c(t)$ be a deterministic function.\\
+	Let
+	\begin{align*}
+		y(t) &= c(t) x(t)
+	\end{align*}
+	Then, $Y$ may or may not be a WSS random process.
+	\footnote{This is intuitively correct as, for example, if a WSS random process is multiplied by a finite window, the product is zero outside the window, and hence is not WSS.}
+	\footnote{If $c(t)$ is periodic, $Y$ is cyclostationary. See \cref{thm:multiplication_in_time_for_stochastic_signal_and_periodic_deterministic_signal}}
+	\label{thm:multiplication_in_time_for_stochastic_signal_and_deterministic_signal}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		R_{Y Y}(t,\tau) &= \expct\left[ y(t + \tau) y^*(t) \right]\\
+		&= \expct\left[ c(t + \tau) x(t + \tau) c^*(t) x^*(t) \right]\\
+		&= c(t + \tau) c^*(t) \expct\left[ x(t + \tau) x^*(t) \right]\\
+		&= c(t + \tau) c^*(t) R_{X X}(\tau)
+	\end{align*}
+	Hence, as the autocorrelation function of $Y$ may be dependent on the absolute time, $Y$ may or may not be WSS.
+\end{proof}
+
+\section{Cyclostationary Processes}
+
+\begin{definition}[Cyclostationary process]
+	A random process is said to be cyclostationary with a cyclic period $T_0$ if the mean $\tilde{\eta}_X(t)$ and $\tilde{R}_{X X}(t,\tau)$ are $T_0$ periodic in $t$, i.e. if for all $t$ and $\tau$,
+	\begin{align*}
+		\tilde{\eta}_X(t + T_0) &= \tilde{\eta}_X(t)\\
+		\tilde{R}_{X X}(t + T_0,\tau) &= \tilde{R}_{X X}(t,\tau)
+	\end{align*}
+\end{definition}
+
+\begin{theorem}[Multiplication in time for stochastic signal]
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	Let $c(t)$ be a $T_0$ periodic deterministic function.\\
+	Let
+	\begin{align*}
+		y(t) &= c(t) x(t)
+	\end{align*}
+	Then, $y(t)$ is cyclostationary with $T_0$.
+	\label{thm:multiplication_in_time_for_stochastic_signal_and_periodic_deterministic_signal}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		\tilde{\eta}_Y(t) &= \expct\left[ c(t) x(t) \right]\\
+		&= c(t) \expct\left[ x(t) \right]\\
+		&= c(t) \eta_X\\
+		&= c(t + T_0) \eta_X\\
+		&= \tilde{\eta}_Y(t + T_0)\\
+		R_{Y Y}(t,\tau) &= \expct\left[ y(t + \tau) y^*(t) \right]\\
+		&= \expct\left[ c(t + \tau) x(t + \tau) c^*(t) x^*(t) \right]\\
+		&= c(t + \tau) c^*(t) \expct\left[ x(t + \tau) x^*(t) \right]\\
+		&= c(t + \tau) c^*(t) R_{X X}(\tau)\\
+		&= c(t + \tau + T_0) c^*(t + T_0) R_{X X}(\tau)\\
+		&= \tilde{R}_{Y Y}(t + T_0,\tau)
+	\end{align*}
+	Hence, $Y$ is cyclostationary with $T_0$.
+\end{proof}
 
 \end{document}
