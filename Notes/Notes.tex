@@ -47,6 +47,7 @@
 \usepackage[noabbrev,capitalize]{cleveref}
 \usepackage[section]{placeins}
 \usepackage[style=numeric, backend=biber]{biblatex}
+\usepackage{adjustbox}
 
 % \bibliography{<mybibfile>}% ONLY selects .bib file; syntax for version <= 1.1b
 \addbibresource{bibliography.bib}% Syntax for version >= 1.2
@@ -62,6 +63,16 @@
 \theoremstyle{theorem}
 \newtheorem{theorem}{Theorem}
 \newtheorem{law}{Law}
+
+\tikzset{
+block/.style = {draw, rectangle, minimum height=3em, minimum width=3em},
+tmp/.style  = {coordinate},
+sum/.style = {draw, circle, node distance=1cm},
+input/.style = {coordinate},
+output/.style = {coordinate},
+pinstyle/.style = {pin edge={to-,thin,black}},
+every text node part/.style={align=center}
+}
 
 \makeatletter
 \@addtoreset{section}{part} %resets section numbers in new part
@@ -88,6 +99,15 @@
 \DeclareMathOperator{\prob}{\mathrm{P}}
 
 \DeclareMathOperator{\expct}{\mathrm{E}}
+
+\DeclareMathOperator{\bin}{\mathrm{Bin}}
+\DeclareMathOperator{\poi}{\mathrm{Poi}}
+\DeclareMathOperator{\geo}{\mathrm{Geo}}
+\DeclareMathOperator{\nb}{\mathrm{NB}}
+\DeclareMathOperator{\hg}{\mathrm{HG}}
+\DeclareMathOperator{\uniform}{\mathrm{U}}
+\DeclareMathOperator{\exponential}{\mathrm{Exp}}
+\DeclareMathOperator{\normal}{\mathrm{N}}
 
 \DeclareMathOperator{\var}{\mathrm{V}}
 \DeclareMathOperator{\sd}{\mathrm{\sigma}}
@@ -883,6 +903,213 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 		&= \tilde{R}_{Y Y}(t + T_0,\tau)
 	\end{align*}
 	Hence, $Y$ is cyclostationary with $T_0$.
+\end{proof}
+
+\begin{theorem}
+	Let $x(t)$ be a WSS random process with spectrum $S_{X X}(\omega)$.\\
+	Let $c(t)$ be a $T_0$ periodic deterministic function.\\
+	Let
+	\begin{align*}
+		\overline{y}(t) &= c(t - \varphi) x(t)
+	\end{align*}
+	where $\varphi \sim \uniform(0,T_0)$ is independent of $x(t)$.\\
+	Then, $\overline{y}(t)$ is WSS with
+	\begin{align*}
+		\eta_{\overline{Y}} &= m_c \eta_X\\
+		R_{\overline{Y} \overline{Y}}(\tau) &= r_c(\tau) R_{X X}(\tau)
+	\end{align*}
+	where
+	\begin{align*}
+		m_c &= \frac{1}{T_0} \int\limits_{0}^{T_0} c(t) \dif t\\
+		r_c(\tau) &= \frac{1}{T_0} \int\limits_{0}^{T_0} c(t + \tau) c^*(t) \dif t
+	\end{align*}
+	and hence,
+	\begin{align*}
+		S_{\overline{Y} \overline{Y}}(\omega) &= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} P_c(\sigma) S_{X X}(\omega - \sigma) \dif \sigma
+	\end{align*}
+	where
+	\begin{align*}
+		P_c(\omega) &= \FT\left\{ r_c(\tau) \right\}\\
+		&= \int\limits_{-\infty}^{\infty} r_c(\tau) e^{-j \omega \tau} \dif \tau
+	\end{align*}
+	\label{thm:multiplication_in_time_for_stochastic_signal_and_periodic_deterministic_signal_dependent_on_random_variable}
+\end{theorem}
+
+\begin{proof}
+	Let
+	\begin{align*}
+		\overline{y}(t) &= c(t - \varphi) x(t)
+	\end{align*}
+	where $\varphi$ is a random variable independent of $x(t)$.\\
+	Therefore,
+	\begin{align*}
+		\tilde{\eta}_{\overline{Y}}(t) &= \expct\left[ c(t - \varphi) x(t) \right]\\
+		&= \expct\left[ \expct\left[ c(t - \varphi) x(t) \Big| \varphi \right] \right]\\
+		&= \expct_{\varphi}\left[ c(t - \varphi) \eta_X \right]\\
+		&= \expct\left[ c(t - \varphi) \right] \eta_X\\
+		\tilde{R}_{\overline{Y} \overline{Y}}(t,\tau) &= \expct\left[ \overline{y}(t + \tau) \overline{y}^*(t) \right]\\
+		&= \expct\left[ \expct\left[ \overline{y}(t + \tau) \overline{y}^+(t) \Big| \varphi \right] \right]\\
+		&= \expct\left[ \expct\left[ c(t + \tau - \varphi) x(t + \tau) c^*(t - \varphi) x^*(t) \Big| \varphi \right] \right]\\
+		&= \expct_{\varphi}\left[ c(t + \tau - \varphi) c^*(t - \varphi) R_{X X}(\tau) \right]\\
+		&= \expct\left[ c(t + \tau - \varphi) c^*(t - \varphi) \right] R_{X X}(\tau)
+	\end{align*}
+	As $c(t)$ is $T_0$ periodic and $\varphi \sim \uniform(0,T_0)$,
+	\begin{align*}
+		\expct\left[ c(t - \varphi) \right] &= \int\limits_{-\infty}^{\infty} \pdf_{\varphi}(\varphi) c(t - \varphi) \dif \varphi\\
+		&= \frac{1}{T_0} \int\limits_{0}^{T_0} c(t - \varphi) \dif \varphi
+	\end{align*}
+	Let
+	\begin{align*}
+		\varphi' &= t - \varphi\\
+		\therefore \dif \varphi' &= \dif \varphi
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ c(t - \varphi) \right] &= \frac{1}{T_0} \int\limits_{t - T_0}^{t} c(\varphi') \dif \varphi'\\
+		&= \frac{1}{T_0} \int\limits_{0}^{T_0} c(t) \dif t\\
+		&= m_c
+	\end{align*}
+	Similarly,
+	\begin{align*}
+		\expct\left[ c(t + \tau - \varphi) c^*(t - \varphi) \right] &= \frac{1}{T_0} \int\limits_{0}^{T_0} c(t + \tau - \varphi) c^*(t - \varphi) \dif \varphi\\
+		&= \frac{1}{T_0} \int\limits_{0}^{T_0} c(t + \tau) c^*(t) \dif t\\
+		&= r_c(\tau)
+	\end{align*}
+\end{proof}
+
+\clearpage
+\part{Pulse Amplitude Modulation}
+
+\section{Direct Multiplication / Natural Sampling}
+
+\begin{definition}[Direct Multiplication PAM]
+	Let $x(t)$ be a deterministic signal with Fourier transform $X(\omega)$.\\
+	Let $c(t)$ be given by a train of pulses, such that
+	\begin{align*}
+		c(t) &= \sum\limits_{n = -\infty}^{\infty} p(t - n T_s)
+	\end{align*}
+	where $p(t)$ is a general pulse.
+	\footnote{$\rect\left( \frac{t}{\Delta} \right)$ is a commonly used pulse.}\\
+	Let the modulated signal be
+	\begin{align*}
+		y(t) &= c(t) x(t)
+	\end{align*}
+	Such a modulation is called direct multiplication pulse amplitude modulation.
+	\label{def:direct_multiplication_PAM}
+\end{definition}
+
+\begin{theorem}
+	For a signal $x(t)$ modulated with direct multiplication PAM,
+	\begin{align*}
+		Y(\omega) &= \sum\limits_{k = -\infty}^{\infty} a_k X(\omega - \omega_s k)
+	\end{align*}
+	Therefore, $Y(\omega)$ is made up of replicas of $X(\omega)$ scaled according to $a_k$ with adjacent replicas separated $\omega_s$.
+	Hence, in order to avoid aliasing,
+	\begin{align*}
+		B &< \frac{\omega_s}{2}
+	\end{align*}
+	where $X(\omega)$ is zero outside $(-B,B)$.
+	\label{thm:Fourier_transform_of_signal_modulated_by_direct_multiplication_PAM}
+\end{theorem}
+
+\begin{proof}
+	Let
+	\begin{align*}
+		\omega_s &= \frac{2 \pi}{T_s}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		c(t) &= \sum\limits_{n = -\infty}^{\infty} p(t - n T_s)
+	\end{align*}
+	Therefore, the Fourier coefficients of $c(t)$ are
+	\begin{align*}
+		a_k &= \frac{1}{T_s} \int\limits_{0}^{T_s} c(t) e^{j \omega_s k t} \dif t\\
+		&= \frac{1}{T_s} \int\limits_{0}^{T_s} \sum\limits_{n = -\infty}^{\infty} p(t - n T_s) e^{j \omega_s k t} \dif t
+	\end{align*}
+	Let
+	\begin{align*}
+		t' &= t - n T_s\\
+		\therefore t &= t' + n T_s\\
+		\therefore \dif t &= \dif t'
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		a_k &= \frac{1}{T_s} \sum\limits_{n = -\infty}^{\infty} \int\limits_{-n T_s}^{-(n - 1) T_s} p(t') e^{-j \omega_s k (t' + n T_s)} \dif t'\\
+		a_k &= \frac{1}{T_s} \sum\limits_{n = -\infty}^{\infty} \int\limits_{-n T_s}^{-(n - 1) T_s} p(t') e^{-j \omega_s k \left( t' + n \frac{2 \pi}{\omega_s} \right)} \dif t'\\
+		&= \frac{1}{T_s} \sum\limits_{n = -\infty}^{\infty} \int\limits_{-n T_s}^{-(n - 1) T_s} p(t') e^{-j \omega_s k t'} \dif t'\\
+		&= \frac{1}{T_s} \int\limits_{-\infty}^{\infty} p(t) e^{-j \omega_s k t} \dif t\\
+		&= \frac{1}{T_s} P(\omega_s k)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		X(\omega) &= \sum\limits_{k = -\infty}^{\infty} 2 \pi a_k \delta(\omega - \omega_s k)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		Y(\omega) &= \frac{1}{2 \pi} C(\omega) \ast X(\omega)\\
+		&= \sum\limits_{k = -\infty}^{\infty} a_k X(\omega - \omega_s k)
+	\end{align*}
+	Therefore, $Y(\omega)$ is made up of replicas of $X(\omega)$ scaled according to $a_k$ with adjacent replicas separated $\omega_s$.
+	Hence, in order to avoid aliasing, $X(\omega)$ must be limited to $\pm \omega_s$, i.e.
+	\begin{align*}
+		B &< \frac{\omega_s}{2}
+	\end{align*}
+	where $X(\omega)$ is zero outside $(-B,B)$.
+\end{proof}
+
+\begin{theorem}
+	A signal modulated with direct multiplication PAM can be reconstructed as in \cref{fig:reconstruction_of_signal_modulated_with_direct_multiplication_PAM}, where the cutoff frequency and the gain of the low pass filter are
+	\begin{align*}
+		\omega_c &\in [B,\omega_s - B)\\
+		A &= \frac{1}{|a_m|}\\
+		&= \frac{T_s}{\left| P(\omega_s m) \right|}
+	\end{align*}
+	\begin{figure}[H]
+		\centering
+		\begin{adjustbox}{max width=\columnwidth}
+		\begin{tikzpicture}[auto, node distance=2cm,>=latex']
+			\node [mixer] (mixer) {};
+			\node [block, right = of mixer] (LPF) {LPF};
+
+			\draw [stealth-] (mixer.west) -- ++(-1,0) node [left] {$y(t)$};
+			\draw [stealth-] (mixer.south) -- ++(0,-1) node [below] {$\cos(m \omega_s t + \varphi)$};
+			\draw [-stealth] (mixer.east) -- (LPF.west) node [midway, above] {$\tilde{y}(t)$};
+			\draw [-stealth] (LPF.east) -- ++(1,0) node [right] {$\hat{x}(t)$};
+		\end{tikzpicture}
+		\end{adjustbox}
+		\caption{Reconstruction of Signal Modulated with Direct Multiplication PAM}
+		\label{fig:reconstruction_of_signal_modulated_with_direct_multiplication_PAM}
+	\end{figure}
+	Hence,
+	\begin{align*}
+		\hat{X}(\omega) &= \cos(\varphi) X(\omega)
+	\end{align*}
+	\label{thm:reconstruction_of_signal_modulated_with_direct_multiplication_PAM}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		\tilde{y} &= \cos(m \omega_s t + \varphi) y(t)\\
+		&= \frac{1}{2} \left( e^{j \varphi} e^{j m \omega_s t} + e^{-j \varphi} e^{-j m \omega_s t} \right) y(t)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\tilde{Y}(\omega) &= \frac{1}{2} \left( e^{j \varphi} Y(\omega - m \omega_s) + e^{-j \varphi} Y(\omega - m \omega_s) \right)\\
+		&= \frac{1}{2} \left( e^{j \varphi} \sum\limits_{k = -\infty}^{\infty} a_k X(\omega - k \omega_s - m \omega_s) + e^{-j \varphi} \sum\limits_{k = -\infty}^{\infty} a_k X(\omega - k \omega_s + m \omega_s \right)\\
+		&= \frac{1}{2} \left( e^{j \varphi} \sum\limits_{k = -\infty}^{\infty} a_k X\left( \omega - (k + m) \omega_s \right) + e^{-j \varphi} \sum\limits_{k = -\infty}^{\infty} a_k X\left( \omega - (k - m) \omega_s \right) \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\hat{X}(t) &= \frac{1}{2 |a_m|} \left( e^{j \varphi} a_{-m} X(\omega) + e^{j \varphi} a_m X(\omega) \right)\\
+		&= \frac{1}{2 |a_m|} \left( e^{j \varphi} {a_m}^* + e^{-j \varphi} a_m \right) X(\omega)\\
+		&= \frac{1}{|a_m|} \Re\left\{ e^{-j \varphi} a_m \right\} X(\omega)
+	\end{align*}
+	Assuming $p(t)$ is symmetric, $a_m$ is real.
+	Therefore,
+	\begin{align*}
+		\hat{X}(\omega) &= \Re\left\{ e^{j \varphi} \right\} X(\omega)\\
+		&= \cos(\varphi) X(\omega)
+	\end{align*}
 \end{proof}
 
 \end{document}
