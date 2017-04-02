@@ -120,6 +120,7 @@ every text node part/.style={align=center}
 
 \DeclareMathOperator{\sinc}{\mathrm{sinc}}
 \DeclareMathOperator{\rect}{\mathrm{rect}}
+\DeclareMathOperator{\tri}{\mathrm{tri}}
 
 %opening
 \title{Communication Systems}
@@ -378,6 +379,17 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 			\end{cases}
 	\end{align*}
 	\label{def:rect_function}
+\end{definition}
+
+\begin{definition}[Triangular pulse function]
+	\begin{align*}
+		\tri(t) &=
+			\begin{cases}
+				1 - |t| &;\quad |t| \le 1\\
+				0 &;\quad |t| > 1\\
+			\end{cases}
+	\end{align*}
+	\label{def:tri_function}
 \end{definition}
 
 \begin{definition}[Sinc function]
@@ -976,6 +988,48 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 		&= r_c(\tau)
 	\end{align*}
 \end{proof}
+
+\begin{question}
+	Consider the zero mean WSS process $X(t)$ with autocorrelation function $R_{X X}(\tau)$.
+	Let
+	\begin{align*}
+		Y(t) &= X(t) c(t - \varphi)
+	\end{align*}
+	where
+	\begin{align*}
+		c(t) &= \cos(\omega_0 t)\\
+		\cdf_{\varphi}(\phi) &=
+			\begin{cases}
+				\frac{\omega_0}{\pi} \left( 1 - \frac{\omega_0}{\pi} \phi \right) &;\quad |\phi| \le \frac{\pi}{\omega_0}\\
+				0 &;\quad \text{otherwise}\\
+			\end{cases}
+	\end{align*}
+	Show that $Y(t)$ is WSS.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		\tilde{\eta}_Y(t) &= \expct\left[ Y(t) \right]\\
+		&= \expct\left[ X(t) c(t - \phi) \right]\\
+		&= \expct\left[ X(t) \right] \expct\left[ \cos\left( \omega_0 (t - \varphi) \right) \right]\\
+		&= 0\\
+		\tilde{R}_{Y Y}(t,\tau) &= \expct\left[ Y(t + \tau) Y(t) \right]\\
+		&= \expct\left[ X(t + \tau) \cos\left( \omega_0 (t + \tau - \varphi) \right) x^*(t) \cos\left( \omega_0 (t - \varphi) \right) \right]\\
+		&= \expct\left[ x(t + \tau) x^*(t) \right] \expct\left[ \cos\left( \omega_0 (t + \tau - \varphi) \right) \cos\left( \omega_0 (t - \varphi) \right) \right]\\
+		&= R_{X X}(\tau) \expct\left[ \cos\left( \omega_0 (t + \tau - \varphi) \right) \cos\left( \omega_0 (t - \varphi) \right) \right]\\
+		&= \frac{R_{X X}(\tau)}{2} \expct\left[ \cos\left( \omega_0 (2 t - 2 \varphi + \tau) \right) + \cos(\omega_0 \tau) \right]\\
+		&= \frac{R_{X X}(\tau)}{2} \cos(\omega_0 \tau) + \frac{R_{X X}(\tau)}{2} \expct\left[ \cos\left( \omega_0 (2 t - 2 \varphi + \tau) \right) \right]
+	\end{align*}
+	Therefore, solving by definition,
+	\begin{align*}
+		\expct\left[ \cos\left( \omega_0 (2 t - 2 \varphi + \tau) \right) \right] &= 0
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\tilde{R}_{Y Y}(t,\tau) &= \frac{R_{X X}(\tau) \cos(\omega_0 \tau)}{2}
+	\end{align*}
+	Therefore, as the mean is independent of time and the autocorrelation function is dependent on the time difference only, $Y(t)$ is WSS.
+\end{solution}
 
 \clearpage
 \part{Pulse Amplitude Modulation}
