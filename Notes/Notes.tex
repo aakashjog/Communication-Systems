@@ -122,6 +122,8 @@ every text node part/.style={align=center}
 \DeclareMathOperator{\rect}{\mathrm{rect}}
 \DeclareMathOperator{\tri}{\mathrm{tri}}
 
+\DeclareMathOperator{\QSNR}{\mathrm{QSNR}}
+
 %opening
 \title{Communication Systems}
 \author{Aakash Jog}
@@ -1057,7 +1059,8 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\begin{align*}
 		Y(\omega) &= \sum\limits_{k = -\infty}^{\infty} a_k X(\omega - \omega_s k)
 	\end{align*}
-	Therefore, $Y(\omega)$ is made up of replicas of $X(\omega)$ scaled according to $a_k$ with adjacent replicas separated $\omega_s$.
+	Therefore, $Y(\omega)$ is made up of replicas of $X(\omega)$ scaled according to $a_k$ with adjacent replicas separated $\omega_s$, and in the time domain, the pulses are distorted and have the shape of the original signal.
+	\footnote{As these replicas differ by a constant factor only, the signal can be recreated using any replica. In order to avoid noise in the reconstruction, the replica used in reconstruction is that for which the noise is the lowest.}
 	Hence, in order to avoid aliasing,
 	\begin{align*}
 		B &< \frac{\omega_s}{2}
@@ -1101,7 +1104,8 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	Therefore,
 	\begin{align*}
 		Y(\omega) &= \frac{1}{2 \pi} C(\omega) \ast X(\omega)\\
-		&= \sum\limits_{k = -\infty}^{\infty} a_k X(\omega - \omega_s k)
+		&= \sum\limits_{k = -\infty}^{\infty} a_k X(\omega - \omega_s k)\\
+		&= \sum\limits_{k = -\infty}^{\infty} \frac{1}{T_s} P(k \omega_s)
 	\end{align*}
 	Therefore, $Y(\omega)$ is made up of replicas of $X(\omega)$ scaled according to $a_k$ with adjacent replicas separated $\omega_s$.
 	Hence, in order to avoid aliasing, $X(\omega)$ must be limited to $\pm \omega_s$, i.e.
@@ -1163,6 +1167,162 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\begin{align*}
 		\hat{X}(\omega) &= \Re\left\{ e^{j \varphi} \right\} X(\omega)\\
 		&= \cos(\varphi) X(\omega)
+	\end{align*}
+\end{proof}
+
+\section{Flat Sampling}
+
+\begin{definition}[Flat Sampling PAM]
+	Let $x(t)$ be a deterministic signal with Fourier transform $X(\omega)$.\\
+	Let $c(t)$ be given by a train of pulses, such that
+	\begin{align*}
+		c(t) &= \sum\limits_{n = -\infty}^{\infty} p(t - n T_s)
+	\end{align*}
+	where $p(t)$ is a general pulse.
+	\footnote{$\rect\left( \frac{t}{\Delta} \right)$ is a commonly used pulse.}\\
+	Let the modulated signal be
+	\begin{align*}
+		y(t) &= \sum\limits_{n = -\infty}^{\infty} x(n T_s) p(t - n T_s)
+	\end{align*}
+	that is, the pulses of the modulated signal have the same shape as the original train of pulses.
+	Such a modulation is called flat sampling pulse amplitude modulation.
+	\label{def:flat_sampling_PAM}
+\end{definition}
+
+\begin{theorem}
+	For a signal $x(t)$ modulated with flat sampling PAM,
+	\begin{align*}
+		Y(\omega) &= \frac{1}{T_s} P(\omega) \sum\limits_{k = -\infty}^{\infty} X(\omega - k \omega_s)
+	\end{align*}
+	Therefore, $Y(\omega)$ is made up of replicas of $X(\omega)$ distorted by the Fourier transform of the pulse, with adjacent replicas separated $\omega_s$.
+	Hence, in the time domain, the shape of the pulses is preserved, but the shape of frequency spectrum is distorted, and the distortion of each replica is different.
+	Hence, in order to avoid aliasing,
+	\begin{align*}
+		B &< \frac{\omega_s}{2}
+	\end{align*}
+	where $X(\omega)$ is zero outside $(-B,B)$.
+	\label{thm:Fourier_transform_of_signal_modulated_by_direct_multiplication_PAM}
+\end{theorem}
+
+\begin{proof}
+	Let
+	\begin{align*}
+		\tilde{y}(t) &= \sum\limits_{n = -\infty}^{\infty} \delta(t - n T_s) x(t)\\
+	\end{align*}
+	that is, let $\tilde{y}(t)$ be the signal sampled at all $n T_s$.
+	Therefore,
+	\begin{align*}
+		\tilde{y}(t) &= \sum\limits_{n = -\infty}^{\infty} x(n T_s) \delta(t - n T_s)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\tilde{Y}(\omega) &= \frac{1}{2 \pi} X(\omega) \ast G(\omega)\\
+		&= \frac{1}{T_s} \sum\limits_{k = -\infty}^{\infty} X(\omega - k \omega_s)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		y(t) &= \tilde{y}(t) \ast p(t)\\
+		&= \sum\limits_{n = -\infty}^{\infty} x(n T_s) p(t - n T_s)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		Y(\omega) &= \tilde{Y}(\omega) P(\omega)\\
+		&= \frac{1}{T_s} P(\omega) \sum\limits_{k = -\infty}^{\infty} X(\omega - k \omega_s)
+	\end{align*}
+\end{proof}
+
+\clearpage
+\part{Pulse Position Modulation}
+
+\begin{definition}[PPM]
+	Let $x(t)$ be a deterministic signal with Fourier transform $X(\omega)$, bounded by $x_{\text{min}}$ and $x_{\text{max}}$.
+	Let $p(t)$ be a general pulse extending from $t = 0$ to $t = \Delta$.\\
+	Let the modulated signal be
+	\begin{align*}
+		y(t) &= \sum\limits_{n = -\infty}^{\infty} p\left( t - n T_s - \left( \alpha x(n T_s) + \beta \right) \right)
+	\end{align*}
+	where $\alpha$ and $\beta$ are such that
+	\begin{align*}
+		\alpha x_{\text{min}} + \beta &= 0\\
+		\alpha x_{\text{max}} + \beta &= T_s - \Delta
+	\end{align*}
+	that is, the pulses of the modulated signal have delay corresponding to the amplitude of the original signal at the corresponding multiple of $T_s$.
+	\footnote{The delay of the pulse is measured with respect to the left edge of the pulse.}
+	Such a modulation is called pulse position modulation.
+	\label{def:PPM}
+\end{definition}
+
+\clearpage
+\part{Quantization}
+
+\begin{definition}[Quantization]
+	Let $x(t)$ be a deterministic signal.
+	Let
+	\begin{align*}
+		x[n] &= x(n T_s)
+	\end{align*}
+	be the corresponding discrete time signal.\\
+	The quantization of the signal is defined to be $x_q[n]$ where $x_q$ can have quantized values only.\\
+	The quantization error is defined to be
+	\begin{align*}
+		q[n] &= x[n] - x_q[n]
+	\end{align*}
+\end{definition}
+
+\begin{definition}[Dense quantization]
+	If the quantization error $q$ is distributed uniformly in each quantization cell, the quantization is called dense quantization.
+\end{definition}
+
+\begin{definition}[Uniform quantization]
+	If the quantum values are such that each quantization cells have equal width, the quantization is called uniform quantization.
+\end{definition}
+
+\begin{theorem}
+	For uniform and dense quantization,
+	\begin{align*}
+		q &\sim \uniform\left( -\frac{\Delta}{2},\frac{\Delta}{2} \right)
+	\end{align*}
+\end{theorem}
+
+\begin{definition}[QSNR]
+	The quantization signal to noise ratio is defined to be
+	\begin{align*}
+		\QSNR &= \frac{\expct\left[ x^2 \right]}{\expct\left[ q^2 \right]}
+	\end{align*}
+\end{definition}
+
+\begin{theorem}
+	If
+	\begin{align*}
+		x &\sim \uniform\left( -\frac{M}{2} \Delta,\frac{M}{2} \Delta \right)\\
+		q &\sim \uniform\left( -\frac{\Delta}{2},\frac{\Delta}{2} \right)
+	\end{align*}
+	then
+	\begin{align*}
+		\QSNR &= M^2
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		x &\sim \uniform\left( -\frac{M}{2} \Delta,\frac{M}{2} \Delta \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ x^2 \right] &= \frac{M^2 \Delta^2}{12}
+	\end{align*}
+	Similarly,
+	\begin{align*}
+		q &\sim \uniform\left( -\frac{\Delta}{2},\frac{\Delta}{2} \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \frac{\Delta^2}{12}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\QSNR &= \frac{\expct\left[ x^2 \right]}{\expct\left[ q^2 \right]}\\
+		&= M^2
 	\end{align*}
 \end{proof}
 
