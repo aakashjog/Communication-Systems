@@ -1326,4 +1326,93 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\end{align*}
 \end{proof}
 
+\begin{question}
+	Let $X$ be a random variable with PDF $\pdf_X(x)$, such that $\forall |x| > 4$,
+	\begin{align*}
+		\pdf_X(x) &= 0
+	\end{align*}
+	Consider the quantization
+	\begin{align*}
+		Q(x) &=
+			\begin{cases}
+				-4 &;\quad x < -3\\
+				-2 &;\quad -3 \le x < -1\\
+				0 &;\quad -1 \le x < 1\\
+				2 &;\quad 1 \le x < 3\\
+				4 &;\quad 3 \le x\\
+			\end{cases}
+	\end{align*}
+	Find $\pdf_q(q)$, the PDF of the quantization error.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		\pdf_q(q) &= \sum \prob(X_q = x_q) \pdf_{q|X_q}(q | x_q)
+	\end{align*}
+	Let $D_{x_q}$ be the domain of $q$ corresponding to $x_q$.
+	Therefore, the domains corresponding to all possible values of $x_q$ are
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l l}
+			\toprule
+			$x_q$ & $D_{x_q}$\\
+			\midrule
+			$-4$ & $[-1,0]$\\
+			$-2$ & $[-1,1]$\\
+			$0$ & $[-1,1]$\\
+			$2$ & $[-1,1]$\\
+			$4$ & $[0,1]$\\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	Also, $\forall q \in D_{x_q}$,
+	\begin{align*}
+		\pdf_{q,x_q}(q,x_q) &= \pdf_X(q - x_q)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\pdf_{q|x_q}(q|x_q) &= \frac{\pdf_{q,x_q}(q,x_q)}{\prob(X_q = x_q)}\\
+		&=
+			\begin{cases}
+				\frac{\pdf_X(q - x_q)}{\prob(X_q = x_q)} &;\quad q \in D_{x_q}\\
+				0 &;\quad q \notin D_{x_q}\\
+			\end{cases}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\pdf_q(q) &= \sum \prob(X_q = x_q) \pdf_{q|X_q}(q | x_q)\\
+		&=
+			\begin{cases}
+				\pdf_X(-4 - q) + \pdf_X(-2  q) + \pdf_X(-q) + \pdf_X(2 - q) &;\quad q \in [-1,0]\\
+				\pdf_X(-2 - q) + \pdf_X(-q) + \pdf_X(2 - q) + \pdf_X(4 - q) &;\quad q \in [0,1]\\
+				0 &;\quad \text{otherwise}\\
+			\end{cases}
+	\end{align*}
+	Hence, the quantization error is not uniformly distributed.
+\end{solution}
+
+\begin{question}
+	Let $Q$ be a quantizer with quantization level $y$, for the cell
+	\begin{align*}
+		R_i &= [t_{i - 1},t_i]
+	\end{align*}
+	Find the optimal MMSE $y_i$s.
+\end{question}
+
+\begin{solution}
+	The MSE is
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \expct\left[ \left( Q(x) - x \right)^2 \right]\\
+		&= \expct_{R_i}\left[ \expct_X\left[ \left( Q(x) - x \right)^2 \Big| x \in R_i \right] \right]\\
+		&= \sum\limits_{i = 1}^{M} \prob(x \in R_i) \expct\left[ \left( Q(x) - x \right)^2 \Big| x \in R_i \right]\\
+		&= \sum\limits_{i = 1}^{M} \prob(x \in R_i) \expct\left[ (y_i - x)^2 \Big| x \in R_i \right]\\
+		&= \sum\limits_{i = 1}^{M} \prob(x \in R_i) \expct\left[ {y_1}^2 - 2 x y_i + x^2 \Big| x \in R_i \right]\\
+		&= \sum\limits_{i = 1}^{M} \prob(x \in R_i) \left( {y_i}^2 - 2 y_i \expct[x | x \in R_i] + \expct\left[ x^2 \Big| x \in R_i \right] \right)
+	\end{align*}
+	Therefore, differentiating with respect to $y_i$, setting to be zero, and solving, the minimal $y_i$ is
+	\begin{align*}
+		y_i &= \expct[x | x \in R_i]
+	\end{align*}
+\end{solution}
+
 \end{document}
