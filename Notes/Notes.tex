@@ -122,6 +122,8 @@ every text node part/.style={align=center}
 \DeclareMathOperator{\rect}{\mathrm{rect}}
 \DeclareMathOperator{\tri}{\mathrm{tri}}
 
+\DeclareMathOperator{\sign}{\mathrm{sign}}
+
 \DeclareMathOperator{\QSNR}{\mathrm{QSNR}}
 
 %opening
@@ -1269,6 +1271,8 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\end{align*}
 \end{definition}
 
+\section{Uniform Quantization}
+
 \begin{definition}[Dense quantization]
 	If the quantization error $q$ is distributed uniformly in each quantization cell, the quantization is called dense quantization.
 \end{definition}
@@ -1292,15 +1296,27 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 \end{definition}
 
 \begin{theorem}
-	If
+	If $x$ is a uniform random variable quantized by a uniform and dense $M$ level quantizer $Q$, i.e.
 	\begin{align*}
 		x &\sim \uniform\left( -\frac{M}{2} \Delta,\frac{M}{2} \Delta \right)\\
-		q &\sim \uniform\left( -\frac{\Delta}{2},\frac{\Delta}{2} \right)
+		Q &=
+			\begin{cases}
+				x_1 &;\quad x \in I_1\\
+				&\vdots\\
+				x_m &;\quad x \in I_m\\
+			\end{cases}
 	\end{align*}
 	then
 	\begin{align*}
-		\QSNR &= M^2
+		q &\sim \uniform\left( -\frac{\Delta}{2},\frac{\Delta}{2} \right)
 	\end{align*}
+	Hence,
+	\begin{align*}
+		\QSNR &= M^2\\
+		\QSNR_{\decibel} &= 20 b \log 2\\
+		&\approx 6 b
+	\end{align*}
+	where $b = \log_2 M$.
 \end{theorem}
 
 \begin{proof}
@@ -1324,7 +1340,139 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 		\QSNR &= \frac{\expct\left[ x^2 \right]}{\expct\left[ q^2 \right]}\\
 		&= M^2
 	\end{align*}
+	Therefore,
+	\begin{align*}
+		\QSNR_{\decibel} &= 10 \log \QSNR\\
+		&= 10 \log\left( M^2 \right)\\
+		&= 20 \log M\\
+		&= 20 \log\left( 2^b \right)\\
+		&= 20 b \log 2\\
+		&\approx 6 b
+	\end{align*}
 \end{proof}
+
+\begin{theorem}
+	If $x$ is a Gaussian random variable with zero mean and $\sigma_x$, quantized by a uniform $M$ level quantizer $Q$
+	\begin{align*}
+		\QSNR &\approx \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 \right)\\
+		\QSNR_{\decibel} &\approx -10 \log\left( \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 \right) \right)
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	Let $A$ be the event that
+	\begin{align*}
+		|x| &< k \sigma_x
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\prob(A) &= \int\limits_{-k \sigma_x}^{k \sigma_x} \frac{1}{\sqrt{2 \pi} \sigma_x} e^{-\frac{1}{2} \frac{x^2}{{\sigma_x}^2}} \dif x
+	\end{align*}
+	Let
+	\begin{align*}
+		x' &= \frac{x}{\sigma_x}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x &= \sigma_x x'\\
+		\dif x &= \sigma_x \dif x'
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\prob(A) &= \int\limits_{-k}^{k} \frac{1}{\sqrt{2 \pi} \sigma_x} e^{-\frac{1}{2} x'} \sigma_x \dif x'\\
+		&= 1 - 2 Q(k)
+	\end{align*}
+	where
+	\begin{align*}
+		Q(x) &= \int\limits_{k}^{\infty} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2} \dif x
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \prob(A) \expct\left[ q^2 \Big| A \right] + \left( 1 - \prob(A) \right) \expct\left[ q^2 \Big| \overline{A} \right]\\
+		&= \left( 1 - 2 Q(k) \right) \expct\left[ q^2 \Big| A \right] + 2 Q(k) \expct\left[ q^2 \Big| \overline{A} \right]
+	\end{align*}
+	If $x$ is in the uniform zone $(-k \sigma_x,k \sigma_x)$, i.e. given $A$,
+	\begin{align*}
+		q &\sim \uniform\left( -\frac{\Delta}{2},\frac{\Delta}{2} \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \Big| A \right] &= \frac{\Delta^2}{12}\\
+		&= \frac{\left( \frac{2 k \sigma_x}{M} \right)^2}{12}\\
+		&= \frac{k^2 {\sigma_x}^2}{3 M^2}
+	\end{align*}
+	If $x$ is outside the uniform zone, i.e. given $\overline{A}$,
+	\begin{align*}
+		q &=
+			\begin{cases}
+				x - k \sigma_x &;\quad x > \sigma_x\\
+				x + k \sigma_x &;\quad x < \sigma_x\\
+			\end{cases}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \Big| \overline{A} \right] &= \int\limits_{\overline{A}} q^2 \pdf_{x | \overline{A}} \dif x
+	\end{align*}
+	Also,
+	\begin{align*}
+		\pdf_{x | \overline{A}} &=
+			\begin{cases}
+				\frac{\pdf_x(x)}{\prob\left( \overline{A} \right)} &;\quad |x| > k \sigma_x\\
+				0 &;\quad |x| > k \sigma_x\\
+			\end{cases}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \Big| \overline{A} \right] &= \int\limits_{-\infty}^{-k \sigma_x} (x + k \sigma_x)^2 \pdf_{x | \overline{A}}\left( x \Big| \overline{A} \right) \dif x + \int\limits_{-k \sigma_x}^{\infty} (x - k \sigma_x)^2 \pdf_{x | \overline{A}}\left( x \Big| \overline{A} \right) \dif x\\
+		&= 2 \int\limits_{k \sigma_x}^{\infty} (x - k \sigma_x)^2 \frac{\pdf_X(x)}{2 Q(k)} \dif x\\
+		&= \frac{1}{Q(k)} \int\limits_{k \sigma_x}^{\infty} (x - k \sigma_x)^2 \frac{1}{\sqrt{2 \pi} \sigma_x} e^{-\frac{1}{2} \frac{x^2}{{\sigma_x}^2}} \dif x
+	\end{align*}
+	Let
+	\begin{align*}
+		x' &= \frac{x}{\sigma_x}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		x &= x' \sigma_x\\
+		\therefore \dif x &= \dif x' \sigma_x
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \Big| \overline{A} \right] &= \frac{1}{Q(k) \sqrt{2 \pi}} \int\limits_{k}^{\infty} (x' \sigma_x - k \sigma_x)^2 \frac{1}{\sigma_x} e^{-\frac{1}{2} {x'}^2} \dif x' \sigma_x\\
+		&= \frac{{\sigma_x}^2}{Q(k) \sqrt{2 \pi}} \int\limits_{k}^{\infty} (x' - k)^2 e^{-\frac{1}{2} {x'}^2} \dif x
+	\end{align*}
+	Therefore, integrating by parts,
+	\begin{align*}
+		\expct\left[ q^2 \Big| \overline{A} \right] &= \frac{1}{Q(k) \sqrt{2 \pi}} \left( k e^{-\frac{1}{2} k^2} + Q(k) \sqrt{2 \pi} - 2 k e^{-\frac{1}{2} k^2} + k^2 Q(k) \sqrt{2 \pi} \right)\\
+		&= {\sigma_x}^2 \left( k^2 + 1 - \frac{k}{Q(k) \sqrt{2 \pi}} e^{-\frac{1}{2} k^2} \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \left( 1 - 2 Q(k) \right) \expct\left[ q^2 \Big| A \right] + 2 Q(k) \expct\left[ q^2 \Big| \overline{A} \right]\\
+		&= \left( 1 - 2 Q(k) \right) \frac{k^2 {\sigma_x}^2}{3 M^2} + 2 Q(k) {\sigma_x}^2 \left( k^2 + 1 - \frac{k}{Q(k) \sqrt{2 \pi}} e^{-\frac{1}{2} k^2} \right)\\
+		&= {\sigma_x}^2 \left( \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 - \frac{k^2}{3 M^2} \right) \right)
+	\end{align*}
+	As $M >> k$, the term $\frac{k^2}{3 M^2}$ may be ignored.
+	Also,
+	\begin{align*}
+		\expct\left[ x^2 \right] &= {\sigma_x}^2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\QSNR &\approx \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\QSNR_{\decibel} &\approx -10 \log\left( \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 \right) \right)
+	\end{align*}
+\end{proof}
+
+\begin{theorem}
+	If $x > 0$,
+	\begin{equation*}
+		\frac{x}{x^2 + 1} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2} < Q(x) < \frac{1}{x} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2}
+	\end{equation*}
+\end{theorem}
 
 \begin{question}
 	Let $X$ be a random variable with PDF $\pdf_X(x)$, such that $\forall |x| > 4$,
@@ -1414,5 +1562,139 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 		y_i &= \expct[x | x \in R_i]
 	\end{align*}
 \end{solution}
+
+\section{Companders}
+
+\begin{theorem}
+	A random variable $x$ can be transformed into a random variable $y$ distributed uniformly between $0$ and $1$ as
+	\begin{align*}
+		y &= \cdf_x(x)
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	Let $y = g(x)$.
+	Therefore, let
+	\begin{align*}
+		y_1 &= g(x_1)\\
+		y_1 + \Delta y_1 &= g(x_1 + \Delta x_1)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\prob\left( x \in (x_1, x_1 + \Delta x) \right) &= \pdf_x(x_1) \Delta x\\
+		&= \prob\left( y \in (y_1, y_1 + \Delta y) \right)\\
+		&= \pdf_y(y_1) \Delta y
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\pdf_x(x) \dif x &= \pdf_y(y) \dif y\\
+		\therefore \pdf_y(y) &= \frac{1}{\left| \dod{y}{x} \right|} \pdf_x(x)\\
+		&= \frac{1}{\left| g'(x) \right|} \pdf_x(x)
+	\end{align*}
+	In particular, let
+	\begin{align*}
+		g(x) &= \cdf_x(x)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		g'(x) &= \pdf_x(x)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\pdf_y(y) &= 1
+	\end{align*}
+	Hence,
+	\begin{align*}
+		y &\sim \uniform(0,1)
+	\end{align*}
+\end{proof}
+
+\subsection{$\mu$ Law}
+
+\begin{definition}[$\mu$ Law]
+	Let $x$ be a random variable bounded by $\pm 1$.\\
+	Let
+	\begin{align*}
+		y &= g(x)\\
+		&= \sign(x) \frac{\log\left( 1 + \mu |x| \right)}{\log(1 + \mu)}
+	\end{align*}
+	where $\mu \in (0,255]$.\\
+	Then, $y$ is said to be obtained by transformation of $x$ with the $\mu$ law.
+	\label{def:mu_law}
+\end{definition}
+
+\begin{theorem}
+	Let $y$ be a random variable obtained by transformation of $x$ with \cref{def:mu_law}.\\
+	Let $y$ be quantized by uniform $M$ level quantizer.
+	Then,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \frac{\log^2(1 + \mu)}{3 \mu^2 M^2} \left( 1 + 2 \mu \expct\left[ |x| \right] + \mu^2 \expct\left[ x^2 \right] \right)
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		\frac{\Delta y}{\Delta x} &= g'(x_1)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\Delta x_m &= \frac{\Delta y_m}{g'(x_m)}\\
+		&= \frac{\frac{2}{M}}{g'(x_m)}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \Big| x \in I_m \right] &= \frac{{\Delta x_m}^2}{12}\\
+		&= \frac{4}{12 M^2 {g'(x_m)}^2}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \sum\limits_{m = 1}^{M} \expct\left[ {q_x}^2 \Big| x \in I_m \right] \prob(I_m)\\
+		\expct\left[ q^2 \right] &= \sum\limits_{m = 1}^{M} \expct\left[ {q_x}^2 \Big| x \in I_m \right] \pdf_x(x_m) \Delta x_m\\
+		&= \sum\limits_{m = 1}^{M} \frac{1}{3 M^2 {g'(x_m)}^2} \pdf_x(x_m) \Delta x_m
+	\end{align*}
+	Therefore, as $\Delta x_m \to 0$,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \int\limits_{-1}^{1} \frac{1}{3 M^2 {g'(x)}^2} \pdf_x(x) \dif x\\
+		&= \frac{1}{3 M^2} \expct\left[ \frac{1}{{g'(x)}^2} \right]\\
+	\end{align*}
+	Also,
+	\begin{align*}
+		g(x) &=
+			\begin{cases}
+				\frac{\log(1 + \mu x)}{\log(1 + \mu)} &;\quad x > 0\\
+				-\frac{\log(1 + \mu x)}{\log(1 + \mu)} &;\quad x < 0\\
+			\end{cases}\\
+		\therefore g'(x) &=
+			\begin{cases}
+				\frac{\mu}{\log(1 + \mu)} \frac{1}{1 + \mu x} &;\quad x > 0\\
+				\frac{\mu}{\log(1 + \mu)} \frac{1}{1 - \mu x} &;\quad x < 0\\
+			\end{cases}\\
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \frac{1}{3 M^2} \expct\left[ \frac{1}{{g'(x)}^2} \right]\\
+		&= \frac{1}{3 M^2} \expct\left[ \left( \frac{\log(1 + \mu)}{\mu} \left( 1 + \mu |x| \right)^2 \right) \right]\\
+		&= \frac{\log^2(1 + \mu)}{3 \mu^2 M^2} \expct\left[ \left( 1 + \mu |x| \right)^2 \right]\\
+		&= \frac{\log^2(1 + \mu)}{3 \mu^2 M^2} \left( 1 + 2 \mu \expct\left[ |x| \right] + \mu^2 \expct\left[ x^2 \right] \right)
+	\end{align*}
+\end{proof}
+
+\subsection{$A$ Law}
+
+\begin{definition}[$A$ Law]
+	Let $x$ be a random variable bounded by $\pm 1$.\\
+	Let
+	\begin{align*}
+		y &= g(x)\\
+		&=
+			\begin{cases}
+				\frac{A |x|}{1 + \log A} \sign(x) &;\quad |x| < \frac{1}{A}\\
+				\frac{1 + \log\left( A |x| \right)}{1 + \log A} \sign(x) &;\quad |x| > \frac{1}{A}\\
+			\end{cases}
+	\end{align*}
+	where $A > 1$.\\
+	Then, $y$ is said to be obtained by transformation of $x$ with the $A$ law.
+	\label{def:A_law}
+\end{definition}
 
 \end{document}
