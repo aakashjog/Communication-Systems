@@ -1352,7 +1352,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 \end{proof}
 
 \begin{theorem}
-	If $x$ is a Gaussian random variable with zero mean and $\sigma_x$, quantized by a uniform $M$ level quantizer $Q$
+	If $x$ is a Gaussian random variable with zero mean and $\sigma_x$, quantized by a uniform $M$ level quantizer $Q$ with highest and lowest thresholds $\pm k \sigma_x$,
 	\begin{align*}
 		\QSNR &\approx \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 \right)\\
 		\QSNR_{\decibel} &\approx -10 \log\left( \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 \right) \right)
@@ -1473,6 +1473,85 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 		\frac{x}{x^2 + 1} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2} < Q(x) < \frac{1}{x} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2}
 	\end{equation*}
 \end{theorem}
+
+\begin{question}
+	Let
+	\begin{align*}
+		X &\sim \exponential(\lambda)
+	\end{align*}
+	Consider a $M$ level dense and uniform quantizer with
+	\begin{align*}
+		\Delta &= \frac{k \lambda^{-1}}{M}
+	\end{align*}
+	that is, the highest threshold is $k \lambda^{-1}$.
+	Compute the QSNR.
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		q &= x_q - x
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \expct\left[ q^2 \Big| x < k \lambda^{-1} \right] \prob\left( x < k \lambda^{-1} \right) + \expct\left[ q^2 \Big| x > k \lambda^{-1} \right] \prob\left( x > k \lambda^{-1} \right)\\
+		&= \frac{\Delta^2}{12} \cdf_x\left( k \lambda^{-1} \right) + \expct\left[ q^2 \Big| x > k \lambda^{-1} \right] \left( 1 - \cdf_x\left( k \lambda^{-1} \right) \right)
+	\end{align*}
+	Also, if $x > k \lambda^{-1}$,
+	\begin{align*}
+		q &= x_q - x\\
+		&= k \lambda^{-1} \left( 1 - \frac{1}{2 M} \right) - x
+	\end{align*}
+	Let $A$ be the event that $x > k \lambda^{-1}$.
+	Therefore,
+	\begin{align*}
+		\pdf_{q|A}(q|A) &= \pdf_{x|A}(x_q - q | A)\\
+		&= \pdf_{x|A}\left( k \lambda^{-1} \left( 1 - \frac{1}{2 M} \right) - q \Big| A \right)\\
+		&= \frac{\pdf_{x|A}\left( x = k \lambda^{-1} \left( 1 - \frac{1}{2 M} \right) - q \cap x > k \lambda^{-1} \right)}{\prob\left( x > k \lambda^{-1} \right)}\\
+		&=
+			\begin{cases}
+				e^k \pdf_x\left( k \lambda^{-1} \left( 1 - \frac{1}{2 M} \right) - q \right) &;\quad q < -\frac{k \lambda^{-1}}{2 M}\\
+				0 &;\quad q > -\frac{k \lambda^{-1}}{2 M}\\
+			\end{cases}\\
+		&=
+			\begin{cases}
+				e^k \lambda e^{-\lambda \left( k \lambda^{-1} \left( 1 - \frac{1}{2 M} \right) - q \right)} &;\quad q < -\frac{k \lambda^{-1}}{2 M}\\
+				0 &;\quad q > -\frac{k \lambda^{-1}}{2 M}\\
+			\end{cases}\\
+		&=
+			\begin{cases}
+				\lambda e^{\frac{k}{2 M}} e^{\lambda q} &;\quad q < -\frac{k \lambda^{-1}}{2 M}\\
+				0 &;\quad q > -\frac{k \lambda^{-1}}{2 M}\\
+			\end{cases}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \Big| x > k \lambda^{-1} \right] &= \int\limits_{-\infty}^{-\frac{k \lambda^{-1}}{2 M}} q^2 \pdf_{q|A}(q|A) \dif q\\
+		&= \lambda^{-2} \left( \frac{k^2}{4 M^2} + \frac{k}{M} + 2 \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\expct\left[ q^2 \right] &= \frac{\Delta^2}{12} \cdf_x\left( k \lambda^{-1} \right) + \expct\left[ q^2 \Big| x > k \lambda^{-1} \right] \left( 1 - \cdf_x\left( k \lambda^{-1} \right) \right)\\
+		&= \frac{\Delta^2}{12} \cdf_x\left( k \lambda^{-1} \right) + \lambda^{-2} \left( \frac{k^2}{4 M^2} + \frac{k}{M} + 2 \right) \left( 1 - \cdf_x\left( k \lambda^{-1} \right) \right)\\
+	\end{align*}
+	Similarly,
+	\begin{align*}
+		\expct[q] &= \expct\left[ q \Big| x < k \lambda^{-1} \right] \prob\left( x < k \lambda^{-1} \right) + \expct\left[ q \Big| x > k \lambda^{-1} \right] \prob\left( x > k \lambda^{-1} \right)\\
+		&= -e^{-k} \lambda^{-1} \left( \frac{k}{2 M} + 1 \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\QSNR &= \frac{\var(x)}{\var(q)}\\
+		&= \frac{\var(x)}{\expct\left[ x^2 \right] - \expct[x]^2}
+	\end{align*}
+	Also, for reasonable values of $k$,
+	\begin{align*}
+		\expct\left[ q^2 \right] &>> \expct[q]^2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\QSNR &\approx \frac{-\lambda^{-2}}{\expct\left[ q^2 \right]}
+	\end{align*}
+\end{solution}
 
 \begin{question}
 	Let $X$ be a random variable with PDF $\pdf_X(x)$, such that $\forall |x| > 4$,
@@ -1616,7 +1695,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	Let
 	\begin{align*}
 		y &= g(x)\\
-		&= \sign(x) \frac{\log\left( 1 + \mu |x| \right)}{\log(1 + \mu)}
+		&= \sign(x) \frac{\ln\left( 1 + \mu |x| \right)}{\ln(1 + \mu)}
 	\end{align*}
 	where $\mu \in (0,255]$.\\
 	Then, $y$ is said to be obtained by transformation of $x$ with the $\mu$ law.
@@ -1628,7 +1707,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	Let $y$ be quantized by uniform $M$ level quantizer.
 	Then,
 	\begin{align*}
-		\expct\left[ q^2 \right] &= \frac{\log^2(1 + \mu)}{3 \mu^2 M^2} \left( 1 + 2 \mu \expct\left[ |x| \right] + \mu^2 \expct\left[ x^2 \right] \right)
+		\expct\left[ q^2 \right] &= \frac{\ln^2(1 + \mu)}{3 \mu^2 M^2} \left( 1 + 2 \mu \expct\left[ |x| \right] + \mu^2 \expct\left[ x^2 \right] \right)
 	\end{align*}
 \end{theorem}
 
@@ -1661,21 +1740,21 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\begin{align*}
 		g(x) &=
 			\begin{cases}
-				\frac{\log(1 + \mu x)}{\log(1 + \mu)} &;\quad x > 0\\
-				-\frac{\log(1 + \mu x)}{\log(1 + \mu)} &;\quad x < 0\\
+				\frac{\ln(1 + \mu x)}{\ln(1 + \mu)} &;\quad x > 0\\
+				-\frac{\ln(1 + \mu x)}{\ln(1 + \mu)} &;\quad x < 0\\
 			\end{cases}\\
 		\therefore g'(x) &=
 			\begin{cases}
-				\frac{\mu}{\log(1 + \mu)} \frac{1}{1 + \mu x} &;\quad x > 0\\
-				\frac{\mu}{\log(1 + \mu)} \frac{1}{1 - \mu x} &;\quad x < 0\\
+				\frac{\mu}{\ln(1 + \mu)} \frac{1}{1 + \mu x} &;\quad x > 0\\
+				\frac{\mu}{\ln(1 + \mu)} \frac{1}{1 - \mu x} &;\quad x < 0\\
 			\end{cases}\\
 	\end{align*}
 	Therefore,
 	\begin{align*}
 		\expct\left[ q^2 \right] &= \frac{1}{3 M^2} \expct\left[ \frac{1}{{g'(x)}^2} \right]\\
-		&= \frac{1}{3 M^2} \expct\left[ \left( \frac{\log(1 + \mu)}{\mu} \left( 1 + \mu |x| \right)^2 \right) \right]\\
-		&= \frac{\log^2(1 + \mu)}{3 \mu^2 M^2} \expct\left[ \left( 1 + \mu |x| \right)^2 \right]\\
-		&= \frac{\log^2(1 + \mu)}{3 \mu^2 M^2} \left( 1 + 2 \mu \expct\left[ |x| \right] + \mu^2 \expct\left[ x^2 \right] \right)
+		&= \frac{1}{3 M^2} \expct\left[ \left( \frac{\ln(1 + \mu)}{\mu} \left( 1 + \mu |x| \right)^2 \right) \right]\\
+		&= \frac{\ln^2(1 + \mu)}{3 \mu^2 M^2} \expct\left[ \left( 1 + \mu |x| \right)^2 \right]\\
+		&= \frac{\ln^2(1 + \mu)}{3 \mu^2 M^2} \left( 1 + 2 \mu \expct\left[ |x| \right] + \mu^2 \expct\left[ x^2 \right] \right)
 	\end{align*}
 \end{proof}
 
