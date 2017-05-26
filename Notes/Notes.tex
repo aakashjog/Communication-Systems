@@ -48,6 +48,8 @@
 \usepackage[section]{placeins}
 \usepackage[style=numeric, backend=biber]{biblatex}
 \usepackage{adjustbox}
+\usepackage{algpseudocode} %algorithms
+\usepackage{algorithm} %algorithms
 
 % \bibliography{<mybibfile>}% ONLY selects .bib file; syntax for version <= 1.1b
 \addbibresource{bibliography.bib}% Syntax for version >= 1.2
@@ -125,6 +127,7 @@ every text node part/.style={align=center}
 \DeclareMathOperator{\sign}{\mathrm{sign}}
 
 \DeclareMathOperator{\QSNR}{\mathrm{QSNR}}
+\DeclareMathOperator{\Q}{\mathcal{Q}}
 
 %opening
 \title{Communication Systems}
@@ -1380,16 +1383,16 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	Therefore,
 	\begin{align*}
 		\prob(A) &= \int\limits_{-k}^{k} \frac{1}{\sqrt{2 \pi} \sigma_x} e^{-\frac{1}{2} x'} \sigma_x \dif x'\\
-		&= 1 - 2 Q(k)
+		&= 1 - 2 \Q(k)
 	\end{align*}
 	where
 	\begin{align*}
-		Q(x) &= \int\limits_{k}^{\infty} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2} \dif x
+		\Q(x) &= \int\limits_{k}^{\infty} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2} \dif x
 	\end{align*}
 	Therefore,
 	\begin{align*}
 		\expct\left[ q^2 \right] &= \prob(A) \expct\left[ q^2 \Big| A \right] + \left( 1 - \prob(A) \right) \expct\left[ q^2 \Big| \overline{A} \right]\\
-		&= \left( 1 - 2 Q(k) \right) \expct\left[ q^2 \Big| A \right] + 2 Q(k) \expct\left[ q^2 \Big| \overline{A} \right]
+		&= \left( 1 - 2 \Q(k) \right) \expct\left[ q^2 \Big| A \right] + 2 \Q(k) \expct\left[ q^2 \Big| \overline{A} \right]
 	\end{align*}
 	If $x$ is in the uniform zone $(-k \sigma_x,k \sigma_x)$, i.e. given $A$,
 	\begin{align*}
@@ -1424,8 +1427,8 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	Therefore,
 	\begin{align*}
 		\expct\left[ q^2 \Big| \overline{A} \right] &= \int\limits_{-\infty}^{-k \sigma_x} (x + k \sigma_x)^2 \pdf_{x | \overline{A}}\left( x \Big| \overline{A} \right) \dif x + \int\limits_{-k \sigma_x}^{\infty} (x - k \sigma_x)^2 \pdf_{x | \overline{A}}\left( x \Big| \overline{A} \right) \dif x\\
-		&= 2 \int\limits_{k \sigma_x}^{\infty} (x - k \sigma_x)^2 \frac{\pdf_X(x)}{2 Q(k)} \dif x\\
-		&= \frac{1}{Q(k)} \int\limits_{k \sigma_x}^{\infty} (x - k \sigma_x)^2 \frac{1}{\sqrt{2 \pi} \sigma_x} e^{-\frac{1}{2} \frac{x^2}{{\sigma_x}^2}} \dif x
+		&= 2 \int\limits_{k \sigma_x}^{\infty} (x - k \sigma_x)^2 \frac{\pdf_X(x)}{2 \Q(k)} \dif x\\
+		&= \frac{1}{\Q(k)} \int\limits_{k \sigma_x}^{\infty} (x - k \sigma_x)^2 \frac{1}{\sqrt{2 \pi} \sigma_x} e^{-\frac{1}{2} \frac{x^2}{{\sigma_x}^2}} \dif x
 	\end{align*}
 	Let
 	\begin{align*}
@@ -1438,19 +1441,19 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\end{align*}
 	Therefore,
 	\begin{align*}
-		\expct\left[ q^2 \Big| \overline{A} \right] &= \frac{1}{Q(k) \sqrt{2 \pi}} \int\limits_{k}^{\infty} (x' \sigma_x - k \sigma_x)^2 \frac{1}{\sigma_x} e^{-\frac{1}{2} {x'}^2} \dif x' \sigma_x\\
-		&= \frac{{\sigma_x}^2}{Q(k) \sqrt{2 \pi}} \int\limits_{k}^{\infty} (x' - k)^2 e^{-\frac{1}{2} {x'}^2} \dif x
+		\expct\left[ q^2 \Big| \overline{A} \right] &= \frac{1}{\Q(k) \sqrt{2 \pi}} \int\limits_{k}^{\infty} (x' \sigma_x - k \sigma_x)^2 \frac{1}{\sigma_x} e^{-\frac{1}{2} {x'}^2} \dif x' \sigma_x\\
+		&= \frac{{\sigma_x}^2}{\Q(k) \sqrt{2 \pi}} \int\limits_{k}^{\infty} (x' - k)^2 e^{-\frac{1}{2} {x'}^2} \dif x
 	\end{align*}
 	Therefore, integrating by parts,
 	\begin{align*}
-		\expct\left[ q^2 \Big| \overline{A} \right] &= \frac{1}{Q(k) \sqrt{2 \pi}} \left( k e^{-\frac{1}{2} k^2} + Q(k) \sqrt{2 \pi} - 2 k e^{-\frac{1}{2} k^2} + k^2 Q(k) \sqrt{2 \pi} \right)\\
-		&= {\sigma_x}^2 \left( k^2 + 1 - \frac{k}{Q(k) \sqrt{2 \pi}} e^{-\frac{1}{2} k^2} \right)
+		\expct\left[ q^2 \Big| \overline{A} \right] &= \frac{1}{\Q(k) \sqrt{2 \pi}} \left( k e^{-\frac{1}{2} k^2} + \Q(k) \sqrt{2 \pi} - 2 k e^{-\frac{1}{2} k^2} + k^2 \Q(k) \sqrt{2 \pi} \right)\\
+		&= {\sigma_x}^2 \left( k^2 + 1 - \frac{k}{\Q(k) \sqrt{2 \pi}} e^{-\frac{1}{2} k^2} \right)
 	\end{align*}
 	Therefore,
 	\begin{align*}
-		\expct\left[ q^2 \right] &= \left( 1 - 2 Q(k) \right) \expct\left[ q^2 \Big| A \right] + 2 Q(k) \expct\left[ q^2 \Big| \overline{A} \right]\\
-		&= \left( 1 - 2 Q(k) \right) \frac{k^2 {\sigma_x}^2}{3 M^2} + 2 Q(k) {\sigma_x}^2 \left( k^2 + 1 - \frac{k}{Q(k) \sqrt{2 \pi}} e^{-\frac{1}{2} k^2} \right)\\
-		&= {\sigma_x}^2 \left( \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 - \frac{k^2}{3 M^2} \right) \right)
+		\expct\left[ q^2 \right] &= \left( 1 - 2 \Q(k) \right) \expct\left[ q^2 \Big| A \right] + 2 \Q(k) \expct\left[ q^2 \Big| \overline{A} \right]\\
+		&= \left( 1 - 2 \Q(k) \right) \frac{k^2 {\sigma_x}^2}{3 M^2} + 2 \Q(k) {\sigma_x}^2 \left( k^2 + 1 - \frac{k}{\Q(k) \sqrt{2 \pi}} e^{-\frac{1}{2} k^2} \right)\\
+		&= {\sigma_x}^2 \left( \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 \Q(k) \left( k^2 + 1 - \frac{k^2}{3 M^2} \right) \right)
 	\end{align*}
 	As $M >> k$, the term $\frac{k^2}{3 M^2}$ may be ignored.
 	Also,
@@ -1459,18 +1462,18 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\end{align*}
 	Therefore,
 	\begin{align*}
-		\QSNR &\approx \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 \right)
+		\QSNR &\approx \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 \Q(k) \left( k^2 + 1 \right)
 	\end{align*}
 	Therefore,
 	\begin{align*}
-		\QSNR_{\decibel} &\approx -10 \log\left( \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 Q(k) \left( k^2 + 1 \right) \right)
+		\QSNR_{\decibel} &\approx -10 \log\left( \frac{k^2}{3 M^2} - \frac{2 k}{\sqrt{2 \pi}} e^{-\frac{1}{2} k^2} + 2 \Q(k) \left( k^2 + 1 \right) \right)
 	\end{align*}
 \end{proof}
 
 \begin{theorem}
 	If $x > 0$,
 	\begin{equation*}
-		\frac{x}{x^2 + 1} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2} < Q(x) < \frac{1}{x} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2}
+		\frac{x}{x^2 + 1} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2} < \Q(x) < \frac{1}{x} \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2}
 	\end{equation*}
 \end{theorem}
 
@@ -1698,7 +1701,14 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 		&= \sign(x) \frac{\ln\left( 1 + \mu |x| \right)}{\ln(1 + \mu)}
 	\end{align*}
 	where $\mu \in (0,255]$.\\
-	Then, $y$ is said to be obtained by transformation of $x$ with the $\mu$ law.
+	Then, $y$ is said to be obtained by transformation of $x$ with the $\mu$ law.\\
+	Hence, the transformation function $g(x)$ is as in \cref{fig:mu_law}.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.8\textwidth]{./Plots/mu_law.pdf}
+		\caption{Transformation Function for $\mu$ Law}
+		\label{fig:transformation_function_for_mu_law}
+	\end{figure}
 	\label{def:mu_law}
 \end{definition}
 
@@ -1772,8 +1782,563 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 			\end{cases}
 	\end{align*}
 	where $A > 1$.\\
-	Then, $y$ is said to be obtained by transformation of $x$ with the $A$ law.
+	Then, $y$ is said to be obtained by transformation of $x$ with the $A$ law.\\
+	Hence, the transformation function $g(x)$ is as in \cref{fig:mu_law}.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.8\textwidth]{./Plots/A_law.pdf}
+		\caption{Transformation Function for $A$ Law}
+		\label{fig:transformation_function_for_A_law}
+	\end{figure}
 	\label{def:A_law}
 \end{definition}
+
+\section{Max-Lloyd Algorithm}
+
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\Require{
+			$\pdf(x)$, the PDF of $x$, such that $\pdf(x) = 0$ for $x \notin [\alpha,\beta]$.
+		}
+		\Ensure{
+			Dense quantization cells defined by $x_i$s.
+		}
+		\State{
+			Determine arbitrary adjacent quantization cells, with boundaries at $b_m$, for $0 \le m \le M$, and
+			\begin{align*}
+				\alpha &= b_0\\
+				\beta &= b_M
+			\end{align*}
+		}
+		\State{
+			For each cell $[b_{m - 1},b_m]$, compute
+			\begin{align*}
+				x_m &= \expct\left[ x \Big| x \in [b_{m - 1},b_m] \right]\\
+				&= \frac{\int\limits_{b_{m - 1}}^{b_m} x \pdf(x) \dif x}{\int\limits_{b_{m - 1}}^{b_m} \pdf(x) \dif x}
+			\end{align*}
+			\label{alg_step:Max_Lloyd_Algorithm_find_means}
+		}
+		\State{
+			Redetermine all $b_m$s, such that
+			\begin{align*}
+				b_m &= \frac{x_m + x_{m + 1}}{2}
+			\end{align*}
+			\label{alg_step:Max_Lloyd_Algorithm_redefined_boundaries}
+		}
+		\State{
+				Repeat steps \ref{alg_step:Max_Lloyd_Algorithm_find_means} and \ref{alg_step:Max_Lloyd_Algorithm_redefined_boundaries} till the $x_m$s and $b_m$s converge.
+			}
+	\end{algorithmic}
+	\caption{Max-Lloyd Algorithm}
+	\label{alg:Max_Lloyd_Algorithm}
+\end{algorithm}
+
+\section{Amplitude Shift Keying}
+
+\begin{definition}[Amplitude shift keying]
+	Let $b_n$ be the $n$th bit of the data to be transmitted
+	\footnote{This data may be possibly obtained by quantization of an analogue signal.}
+	Consider the information signal
+	\begin{align*}
+		s(t) &= \sum\limits_{n = -\infty}^{\infty} b_n p(t - n T)
+	\end{align*}
+	where $p(t)$ is a pulse chosen according to the requirements.
+	\footnote{For example, if a rectangular pulse is used, a limited number of channels can be used as the rectangular pulse has a large bandwidth. Alternatively, if a sinc is used as a pulse, a higher number of channels can be used as the bandwidth is smaller.}
+	Then, the information signal $s(t)$ is said to be obtained by amplitude shift keying or ASK.
+\end{definition}
+
+\begin{definition}[$M$-ary ASK]
+	Consider the information signal
+	\begin{align*}
+		s(t) &= \sum\limits_{n = -\infty}^{\infty} c_n p(t - n T)
+	\end{align*}
+	where $0 \le c_n < 2^M$ for each $n$.
+	Hence, each `data point' in the information signal is represented by one of $2^M$ levels.
+	Then, the information signal $s(t)$ is said to be obtained by $M$-ary ASK.
+\end{definition}
+
+\subsection{Gray Coding}
+
+\begin{definition}[Gray coding]
+	A coding of $2^M$ levels ordered in a way that the difference between any two adjacent levels is of exactly one bit is called a Gray coding.
+\end{definition}
+
+Consider $M$-ary ASK with consecutive levels defined by standard binary coding e.g. $8$ binary levels ordered as $(000,001,010,011,100,101,110,111)$.
+If a level is misinterpreted by the receiver as one of the adjacent levels, there may be an error of multiple bits.
+For example, if $011$ is misinterpreted as $110$, the error is of three bits.
+Hence, small noise can result in a very large error.
+This problem can be reduced by using Gray coding, and the error is limited to a single bit.
+
+\section{Inter Symbol Interference}
+
+\begin{definition}[Inter symbol interference]
+	The interference of a pulse corresponding to a `data point' at one point in time with that corresponding to another is called inter symbol interference or ISI.
+\end{definition}
+
+\begin{definition}[NISI condition]
+	The no-ISI condition is
+	\begin{align*}
+		p(t) &= 0
+	\end{align*}
+	for all $t = n T$, except at $n = 0$, and
+	\begin{align*}
+		p(0) &= 1
+	\end{align*}
+	Equivalently, $\forall \omega$,
+	\begin{align*}
+		\sum\limits_{k = -\infty}^{\infty} P\left( \omega - \frac{2 \pi}{T} k \right) &= T
+	\end{align*}
+\end{definition}
+
+\begin{question}
+	Consider a signal $s_n$, represented by four levels, i.e. two bits.
+	The received signal is
+	\begin{align*}
+		\hat{s_n} &=
+			\begin{cases}
+				s_n &;\quad \text{with probability $1 - p$}\\
+				(s_n + 1) \mod 4 &;\quad \text{with probability $p$}\\
+			\end{cases}
+	\end{align*}
+	that is, the information is received as sent with probability $1 - p$, and is received with error of one level with probability $p$.
+	\begin{enumerate}
+		\item
+			Find the probability of error if the levels are determined by standard binary coding.
+		\item
+			Find the probability of error if the levels are determined by Gray coding.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}
+		\item
+			Let $P_{b_i}$ be the probability of error in the $i$th bit.
+			Therefore, let $\prob(b_i|s_j)$ be the probability of error in the $i$th bit, given the value of the $j$th symbol was transmitted.
+			Therefore, the total probability of error in the information is
+			\begin{align*}
+				P_b &= \frac{1}{k} \sum\limits_{i = 0}^{k - 1} P_{b_i}\\
+				&= \frac{1}{k} \sum\limits_{i = 0}^{k - 1} \sum\limits_{j = 0}^{3} \prob(b_i|s_j) \prob(s_j)\\
+				&= \frac{1}{k} \sum\limits_{i = 0}^{k - 1} \left( \frac{1}{4} \sum\limits_{j = 0}^{3} \prob(b_i|s_j) \right)\\
+				&= \frac{1}{2} \left( \frac{1}{4} \left( (p + p + p + p) + (0 + p + 0 + p) \right) \right)\\
+				&= \frac{3 p}{4}
+			\end{align*}
+		\item
+			Let $P_{b_i}$ be the probability of error in the $i$th bit.
+			Therefore, let $\prob(b_i|s_j)$ be the probability of error in the $i$th bit, given the value of the $j$th symbol was transmitted.
+			Therefore, the total probability of error in the information is
+			\begin{align*}
+				P_b &= \frac{1}{k} \sum\limits_{i = 0}^{k - 1} P_{b_i}\\
+				&= \frac{1}{k} \sum\limits_{i = 0}^{k - 1} \sum\limits_{j = 0}^{3} \prob(b_i|s_j) \prob(s_j)\\
+				&= \frac{1}{k} \sum\limits_{i = 0}^{k - 1} \left( \frac{1}{4} \sum\limits_{j = 0}^{3} \prob(b_i|s_j) \right)\\
+				&= \frac{1}{2} \left( \frac{1}{4} \left( (p + 0 + p + 0) + (0 + p + 0 + p) \right) \right)\\
+				&= \frac{p}{2}
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Consider a information signal $\sum\limits_{n \in \mathbb{Z}} a_n \delta(t - n T)$ where $a_n \in \{-1,1\}$.
+	This signal is passed through a LTI system with transfer function
+	\begin{align*}
+		\tilde{H}(f) &=
+			\begin{cases}
+				1 - T |f| &;\quad |f| \le \frac{1}{T}\\
+				0 &;\quad \text{otherwise}\\
+			\end{cases}
+	\end{align*}
+	to obtain $y(t)$.
+	$y(t)$ is then sampled at multiples of $t_n$, and passed through a slicer
+	\begin{align*}
+		g(x) &= \sign(x)
+	\end{align*}
+	to obtain $\hat{a_n}$.
+	\begin{enumerate}
+		\item
+			Compute $h(t)$.
+			Prove that $\forall n \neq 0, n \in \mathbb{Z}$,
+			\begin{align*}
+				h(n T) &= 0
+			\end{align*}
+		\item
+			Does the NISI condition hold for $t_n = n T + \frac{T}{4}$?
+		\item
+			For the above sampling times, is it possible that an estimation error of $\hat{a_n}$ occurs due to ISI?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}
+		\item
+			$\tilde{H}(f)$ is a triangular function, and hence is a convolution of two rectangular functions with width $\frac{1}{T}$, and height $\sqrt{T}$.
+			Therefore,
+			\begin{align*}
+				h(t) &= \IFT\left\{ \tilde{H}(f) \right\}\\
+				&= \left( \frac{1}{\sqrt{T}} \sinc\left( \frac{\pi t}{T} \right) \right)^2\\
+				&= \frac{1}{T} \sinc^2\left( \frac{\pi t}{T} \right)
+			\end{align*}
+		\item
+			\begin{align*}
+				h(t) \Big|_{t = t_n} &= h\left( n T + \frac{T}{4} \right)\\
+				&= \frac{1}{T} \sinc^2\left( \frac{\pi}{T} \left( n T + \frac{T}{4} \right) \right)\\
+				&\neq 0
+			\end{align*}
+		\item
+			Without loss of generality, for $a_0$, and
+			\begin{align*}
+				t_0 &= \frac{T}{4}
+			\end{align*}
+			the continuous time signal is
+			\begin{align*}
+				y\left( \frac{T}{4} \right) &= \sum\limits_{n \in \mathbb{Z}} a_n h\left( t - n T + \frac{T}{4} \right) \Big|_{t = \frac{T}{4}}\\
+				&= a_0 h\left( \frac{T}{4} \right) + \sum\limits_{n \in \mathbb{Z} \setminus \{0\}} a_n h\left( t - n T + \frac{T}{4} \right)
+			\end{align*}
+			Hence, in the worst case
+			\footnote{If $y(t)$ is higher than intended, there would be no error as the signal would be corrected to be $1$ due to the slicer. Hence, the worst case is when only $a_0$ is $1$, and all others are $-1$.}
+			, i.e. for $a_0 = 1$ and all other $a_i = -1$ for $i \neq 0$,
+			\begin{align*}
+				h\left( t - n T + \frac{T}{4} \right) &= \frac{1}{T} \sinc^2\left( \frac{\pi}{T} \left( n T + \frac{T}{4} \right) \right)
+			\end{align*}
+			Therefore, an error will occur if and only if
+			\begin{align*}
+				y\left( \frac{T}{4} \right) &< 0
+			\end{align*}
+			Hence, solving,
+			\begin{align*}
+				h\left( n T + \frac{T}{4} \right) &> 0
+			\end{align*}
+			Therefore, there be no error due to ISI.
+	\end{enumerate}
+\end{solution}
+
+\section{The Raised Cosine Family of Pulses}
+
+\begin{definition}[The raised cosine family of pulses]
+	The set of all $p(t)$, such that
+	\begin{align*}
+		P(\omega) &=
+			\begin{cases}
+				1 &;\quad |\omega| \le \pi - \Delta\\
+				g(\omega) &;\quad \pi - \Delta < |\omega| < \pi + \Delta\\
+				0 &;\quad |\omega| \ge \pi + \Delta\\
+			\end{cases}
+	\end{align*}
+	where
+	\begin{align*}
+		g(\omega) &= \frac{1}{2} \left( 1 - \sin\left( \frac{|\omega| - \pi}{\Delta} \frac{\pi}{2} \right) \right)
+	\end{align*}
+	and
+	\begin{align*}
+		\Delta &= \rho \pi
+	\end{align*}
+	is called the raised cosine family of pulses.
+	$\rho \in [0,1]$ is called the rolloff factor of the pulse, chosen according to the requirements.
+	Hence, the frequency domain representation of the pulse is as in \cref{fig:raised_cosine_pulse_in_frequency_domain}.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.8\textwidth]{./Plots/raised_cosine_pulses_in_frequency.pdf}
+		\caption{Raised Cosine Pulses in Frequency Domain}
+		\label{fig:raised_cosine_pulses_in_frequency_domain}
+	\end{figure}
+\end{definition}
+
+\begin{theorem}
+	The time domain representation of a raised cosine pulse is
+	\begin{align*}
+		p(t) &= \sinc\left( \pi \frac{t}{T} \right) \frac{\cos\left( \rho \pi \frac{t}{T} \right)}{1 - \left( \frac{2 t \rho}{T} \right)^2}
+	\end{align*}
+	where $\rho \in [0,1]$ is the rolloff factor of the pulse.
+	Hence, the time domain representation of the pulse is as in \cref{fig:raised_cosine_pulse_in_time_domain}.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width = 0.8\textwidth]{./Plots/raised_cosine_pulses_in_time.pdf}
+		\caption{Raised Cosine Pulses in Time Domain}
+		\label{fig:raised_cosine_pulse_in_time_domain}
+	\end{figure}
+\end{theorem}
+
+\begin{proof}
+	For simplicity, let $T = 1$.
+	Let
+	\begin{align*}
+		R(\omega) &= \rect\left( \frac{w}{2 \pi} \right)\\
+		Q(\omega) &=
+			\begin{cases}
+				c \cos\left( \frac{\omega}{\Delta} \frac{\pi}{2} \right) &;\quad |\omega| < \Delta\\
+				0 &;\quad \text{otherwise}
+			\end{cases}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		P(\omega) &= \frac{1}{2 \pi} R(\omega) \ast Q(\omega)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		r(t) &= \sinc(\pi t)\\
+		q(t) &= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} Q(\omega) e^{j \omega t} \dif \omega\\
+		&= \frac{1}{2 \pi} \int\limits_{-\Delta}^{\Delta} \frac{\pi^2}{2 \Delta} \cos\left( \frac{\omega}{\Delta} \frac{\pi}{2} \right) e^{j \omega t} \dif \omega\\
+		&= \frac{\pi}{4 \Delta} \int\limits_{-\Delta}^{\Delta} \cos\left( \frac{\omega}{\Delta} \frac{\pi}{2} \right) \left( \cos(\omega t) + j \sin(\omega t) \right) \dif \omega\\
+		&= \frac{\pi}{4 \Delta} \int\limits_{-\Delta}^{\Delta} \cos\left( \frac{\omega}{\Delta} \frac{\pi}{2} \right) \cos(\omega t) \dif \omega\\
+		&= \frac{\pi}{4 \Delta} \int\limits_{-\Delta}^{\Delta} \frac{1}{2} \left( \cos\left( \omega \left( \frac{\pi}{2 \Delta} + t \right) \right) + \cos\left( \omega \left( \frac{\pi}{2 \Delta} - t \right) \right) \right) \dif \omega\\
+		&= \frac{\pi}{4 \Delta} \int\limits_{0}^{\Delta} \left( \cos\left( \omega \left( \frac{\pi}{2 \Delta} + t \right) \right) + \cos\left( \omega \left( \frac{\pi}{2 \Delta} - t \right) \right) \right) \dif \omega\\
+		&= \left. \frac{\pi}{4 \Delta} \left( \frac{\sin\left( \omega \left( \frac{\pi}{2 \Delta} + t \right) \right)}{\frac{\pi}{2 \Delta} + t} + \frac{\sin\left( \omega \left( \frac{\pi}{2 \Delta} - t \right) \right)}{\frac{\pi}{2 \Delta} - t} \right) \right|_{0}^{\Delta}\\
+		&= \frac{\pi}{4 \Delta} \left( \frac{\sin\left( t \Delta + \frac{\pi}{2} \right)}{\frac{\pi}{2 \Delta} + t} + \frac{\sin\left( -t \Delta + \frac{\pi}{2} \right)}{\frac{\pi}{2 \Delta} - t} \right)\\
+		&= \frac{\pi}{4 \Delta} \left( \frac{1}{\frac{\pi}{2 \Delta} + t} + \frac{1}{\frac{\pi}{2 \Delta} - t} \right) \cos(t \Delta)\\
+		&= \frac{\frac{\pi^2}{4 \Delta^2}}{\frac{\pi^2}{4 \Delta^2} - t^2} \cos(t \Delta)\\
+		&= \frac{\cos(t \Delta)}{1 - \left( \frac{2 t \Delta}{\pi} \right)^2}
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		P(\omega) &= \frac{1}{2 \pi} R(\omega) \ast Q(\omega)
+	\end{align*}
+	Hence,
+	\begin{align*}
+		p(t) &= r(t) q(t)\\
+		&= \sinc(\pi t) \frac{\cos(t \Delta)}{1 - \left( \frac{2 t \Delta}{\pi} \right)^2}
+	\end{align*}
+	Similarly, for a general $T$,
+	\begin{align*}
+		p(t) &= \sinc\left( \pi \frac{t}{T} \right) \frac{\cos\left( \rho \pi \frac{t}{T} \right)}{1 - \left( \frac{2 t \rho}{T} \right)^2}
+	\end{align*}
+\end{proof}
+
+\begin{question}
+	Let
+	\begin{align*}
+		p(t) &= c(t) r(t)
+	\end{align*}
+	where
+	\begin{align*}
+		R(\omega) &= \rect\left( \frac{\omega}{2 \pi} \right)\\
+		&=
+			\begin{cases}
+				1 &;\quad |\omega| \le \pi\\
+				0 &;\quad \text{otherwise}\\
+			\end{cases}\\
+		C(\omega) &= A \tri\left( \frac{\omega}{\Delta} \right)\\
+		&=
+			\begin{cases}
+				A \left( 1 - \frac{|\omega|}{\Delta} \right) &;\quad |\omega| \le \Delta\\
+				0 &;\quad \text{otherwise}\\
+			\end{cases}\\
+	\end{align*}
+	\begin{enumerate}
+		\item
+			Find $P(\omega)$.
+		\item
+			Given
+			\begin{align*}
+				\int\limits_{-\infty}^{\infty} c(t) \dif t &= \frac{2 \pi}{\Delta}
+			\end{align*}
+			find $A$.
+		\item
+			Does the NISI condition hold for the above?
+		\item
+			Find $p(t)$ for $\Delta \to 0$.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}
+		\item
+			\begin{align*}
+				P(\omega) &= \FT\left\{ p(t) \right\}\\
+				&= \FT\left\{ c(t) r(t) \right\}\\
+				&= \frac{1}{2 \pi} \FT\left\{ c(t) \right\} \ast \FT\left\{ r(t) \right\}\\
+				&= \frac{1}{2 \pi} C(\omega) \ast R(\omega)\\
+				&= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} R(\sigma) C(\omega - \sigma) \dif \sigma\\
+				&= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} R(\sigma) C(\sigma - \omega) \dif \sigma\\
+				&=
+					\begin{cases}
+						0 &;\quad \omega < -\pi - \Delta\\
+						\frac{A \Delta}{4 \pi} \left( 1 + \frac{\omega + \pi}{\Delta} \right)^2 &;\quad -\pi - \Delta < \omega \le -\pi\\
+						\frac{A \Delta}{4 \pi} \left( 2 - \left( 1 - \frac{\omega + \pi}{\Delta} \right)^2 \right) &;\quad -\pi < \omega < -\pi + \Delta\\
+						\frac{A \Delta}{4 \pi} 2 &;\quad -\pi + \Delta < \omega < \pi - \Delta\\
+						\frac{A \Delta}{4 \pi} \left( 2 - \left( 1 + \frac{\omega + \pi}{\Delta} \right)^2 \right) &;\quad \pi - \Delta < \omega < \pi\\
+						\frac{A \Delta}{4 \pi} \left( 1 - \frac{\omega + \pi}{\Delta} \right)^2 &;\quad \pi < \Delta < \omega < \pi + \Delta\\
+						0 &;\quad \pi + \Delta < \omega\\
+					\end{cases}
+			\end{align*}
+		\item
+			\begin{align*}
+				C(\omega) &= \int\limits_{-\infty}^{\infty} c(t) e^{-j \omega t} \dif t\\
+				\therefore C(0) &= \int\limits_{-\infty}^{\infty} c(t) \dif t\\
+				\therefore A &= \frac{2 \pi}{\Delta}
+			\end{align*}
+		\item
+			\begin{align*}
+				p(t) &= c(t) r(t)\\
+				&= \sinc(\pi t) \sinc^2\left( \frac{\Delta t}{2} \right)
+			\end{align*}
+			Therefore, $\forall n \neq 0$,
+			\begin{align*}
+				p(n T) &= \sinc(n \pi T) \sinc^2\left( \frac{n \Delta T}{2} \right)\\
+				&= 0
+			\end{align*}
+		\item
+			\begin{align*}
+				\lim\limits_{\Delta \to 0} C(\omega) &= 2 \pi \delta(\omega)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				P(\omega) &= \frac{1}{2 \pi} R(\omega) \ast C(\omega)\\
+				&= \frac{1}{2 \pi} R(\omega) \ast \left( 2 \pi \delta(\omega) \right)\\
+				&= R(\omega)
+			\end{align*}
+			This is also obvious as a delta in frequency corresponds to a constant $1$ in time.
+			Similarly, as the triangle in frequency converges to a delta, $P(\omega)$ converges a rectangle.
+			Therefore,
+			\begin{align*}
+				p(t) &= r(t)\\
+				&= \sinc(\pi t)
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\clearpage
+\part{Matched Filters}
+
+\section{Single Pulse with White Noise}
+
+Consider an information signal
+\begin{align*}
+	s(t) &= \sum\limits_{n = -\infty}^{\infty} b_n p(t - n T)
+\end{align*}
+Let the received signal be
+\begin{align*}
+	x(t) &= s(t) + v(t)
+\end{align*}
+where $v(t)$ is zero mean Gaussian white noise.\\
+For simplicity, let $n = 1$.
+Therefore,
+\begin{align*}
+	x(t) &= b_0 p(t) + v(t)
+\end{align*}
+Hence, based on $x(t)$, the receiver must decide if $b_0$ is $0$ or $1$.\\
+Consider the hypotheses
+\begin{align*}
+	H_0 &: b_0 = 0\\
+	H_1 &: b_0 = 1
+\end{align*}
+Equivalently,
+\begin{align*}
+	H_0 &: x(t) = v(t)\\
+	H_1 &: x(t) = p(t) + v(t)
+\end{align*}
+As $v(t)$ is zero mean Gaussian white noise,
+\begin{align*}
+	\expct\left[ v(t) \right] &= 0\\
+	\expct\left[ v(t + \tau) v(t) \right] &= \frac{N_0}{2} \delta(t)\\
+	S_{v v}(\omega) &= \frac{N_0}{2}
+\end{align*}
+Therefore, let $y(t)$ be the signal obtained by passing $x(t)$ through a LTI system with $h(\tau)$, and let $z$ be a sample of this $y(t)$ taken at $t_0$.
+Let the critical value be $\lambda$, such that $H_0$ is accepted if and only
+\begin{align*}
+	z &< \lambda
+\end{align*}
+and $H_1$ is accepted if and only if
+\begin{align*}
+	z &> \lambda
+\end{align*}
+Hence, the filter is as in
+\begin{figure}[H]
+	\centering
+		\begin{adjustbox}{max width=\columnwidth}
+		\begin{tikzpicture}[auto, node distance=2cm,>=latex']
+			\node [block] (optimal_filter) {$\tilde{h}(\tau) = \tilde{p}^*\left( \tilde{t_0} - \tau \right)$};
+			\draw [stealth-] (optimal_filter.west) -- ++(-1,0) node [left] {$x(t), p(t), v(t)$};
+			\draw (optimal_filter.east) to [closing switch, label = $t_0$] ++(2,0) [-stealth] to ++(1,0) node [right] {$y(t_0) \gtrless \lambda$};
+		\end{tikzpicture}
+		\end{adjustbox}
+	\caption{Matched Filter for a Single Pulse with White Noise}
+	\label{fig:matched_filter_for_a_single_pulse_with_white_noise}
+\end{figure}
+Under either of the hypotheses, the variance of $y(t)$ is
+\begin{align*}
+	\sigma^2 &= \frac{N_0}{2} \int\limits_{-\infty}^{\infty} \left| h(\tau) \right|^2 \dif t
+\end{align*}
+Under $H_0$, the expectation of $y(t)$ is
+\begin{align*}
+	\expct\left[ y(t) \right] &= 0
+\end{align*}
+Under $H_1$, the expectation of $y(t)$ is
+\begin{align*}
+	\mu &= \expct\left[ y(t) \right]\\
+	&= \int\limits_{-\infty}^{\infty} h(\tau) p(t_0 0 \tau) \dif \tau
+\end{align*}
+Hence, under $H_0$,
+\begin{align*}
+	z &= \normal\left( 0,\sigma^2 \right)
+\end{align*}
+and under $H_1$,
+\begin{align*}
+	z &= \normal\left( \mu,\sigma^2 \right)
+\end{align*}
+Hence, the critical value should be
+\begin{align*}
+	\lambda &= \frac{\mu}{2}
+\end{align*}
+Therefore, the probability of a type 1 error
+\footnote{False positive}
+is
+\begin{align*}
+	\prob\left( z > \lambda \Big| H_0 \right) &= \int\limits_{\lambda}^{\infty} \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{1}{2} \frac{z^2}{\sigma^2}} \dif z\\
+	&= \Q\left( \frac{\lambda}{\sigma} \right)\\
+	&= \Q\left( \frac{\mu}{2 \sigma} \right)
+\end{align*}
+Hence, in order to minimize the probability of a type 1 error, $\frac{|\mu|^2}{\sigma^2}$ should be maximized.
+Hence, by the Cauchy-Schwartz inequality for integrals over complex valued functions
+\footnote{
+	\begin{align*}
+		\left| \int\limits_{a}^{b} w_1(t) {w_2}^*(t) \dif t \right|^2 &\le \int\limits_{a}^{b} \left| w_1(t) \right|^2 \dif t \int\limits_{a}^{b} \left| w_2(t) \right|^2 \dif t
+	\end{align*}
+	and the equality holds if and only if $\exists \rho, \theta$, such that $w_2 = \rho e^{j \theta} w_1$.
+}
+,
+\begin{align*}
+	\left| \int\limits_{-\infty}^{\infty} h(\tau) p(t_0 - \tau) \dif \tau \right|^2 &\le \int\limits_{-\infty}^{\infty} \left| h(\tau) \right|^2 \dif t \int\limits_{-\infty}^{\infty} \left| p^*(t_0 - \tau) \right|^2 \dif \tau
+\end{align*}
+Hence, for the equality to be satisfied, i.e. for minimal error, the LTI system must be chosen such that
+\begin{align*}
+	h(\tau) &= p^*(t_0 - \tau)
+\end{align*}
+Furthermore, $t_0$ must be chosen such $h(\tau)$ is causal.
+Let $t_f$ be the time at which the pulse $p(t)$ ends.
+Hence, for $h(\tau)$ to be causal,
+\begin{align*}
+	t_0 > t_f
+\end{align*}
+Hence, the optimal filter, matched to the pulse, is given by
+\begin{align*}
+	h_{\text{optimal}}(\tau) &= p^*(t_f - \tau)\\
+	H_{\text{optimal}}(\omega) &= e^{-j \omega \tilde{t_0}} \tilde{P}^*(\omega)
+\end{align*}
+
+\section{Single Pulse with Coloured Noise}
+
+\begin{theorem}[Paley-Wiener Theorem]
+	If $S_{v v}(\omega)$ is positive and bounded for all $\omega$, then there exists a stable and causal system $G(\omega)$ with a stable and causal inverse, such that
+	\begin{align*}
+		S_{v v}(\omega) &= G(\omega) G^*(\omega)\\
+		&= \left| G(\omega) \right|^2
+	\end{align*}
+	\label{thm:Paley_Wiener_theorem}
+\end{theorem}
+
+A matched filter for a single pulse, affected by coloured noise, can be implemented using a matched filter for white noise, as in \cref{fig:matched_filter_for_coloured_noise_implemented_using_a_matched_filter_for_white_noise}.
+\begin{figure}[H]
+	\centering
+		\begin{adjustbox}{max width=\columnwidth}
+		\begin{tikzpicture}[auto, node distance=2cm,>=latex']
+			\node [block] (whitening_filter) {$\frac{1}{G(\omega)}$\\whitening filter};
+
+			\draw [stealth-] (whitening_filter.west) -- ++(-1,0) node [left] {$x(t), p(t), v(t)$};
+			\node [block, right = of whitening_filter] (optimal_filter) {$\tilde{h}(\tau) = \tilde{p}^*\left( \tilde{t_0} - \tau \right)$};
+			\draw (whitening_filter.east) -- (optimal_filter.west) node [midway, above] {$\tilde{x}(t)$\\$\tilde{p}(t)$\\$\tilde{v}(t)$};
+			\draw (optimal_filter.east) to [closing switch, label = $\tilde{t_0}$] ++(2,0) [-stealth] to ++(1,0) node [right] {$\tilde{y}\left( \tilde{t_0} \right) \gtrless \tilde{\lambda}$};
+		\end{tikzpicture}
+		\end{adjustbox}
+	\caption{Matched Filter for Coloured Noise Implemented Using a Matched Filter for White Noise}
+	\label{fig:matched_filter_for_coloured_noise_implemented_using_a_matched_filter_for_white_noise}
+\end{figure}
 
 \end{document}
