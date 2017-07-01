@@ -90,6 +90,7 @@ every text node part/.style={align=center}
 \renewcommand{\marginfont}{\scriptsize \color{blue}}
 
 \renewcommand{\tilde}{\widetilde}
+\renewcommand{\hat}{\widehat}
 
 \def\doubleunderline#1{\underline{\underline{#1}}}
 
@@ -128,6 +129,21 @@ every text node part/.style={align=center}
 
 \DeclareMathOperator{\QSNR}{\mathrm{QSNR}}
 \DeclareMathOperator{\Q}{\mathcal{Q}}
+
+\DeclareMathOperator{\SNR}{\mathrm{SNR}}
+
+\DeclareMathOperator*{\argmin}{\mathrm{argmin}}
+
+\DeclareMathOperator{\atan2}{\mathrm{atan2}}
+
+\DeclareMathOperator{\DSB}{\mathrm{DSB}}
+\DeclareMathOperator{\AM}{\mathrm{AM}}
+\DeclareMathOperator{\USB}{\mathrm{USB}}
+\DeclareMathOperator{\LSB}{\mathrm{LSB}}
+
+\DeclareMathOperator{\IF}{\mathrm{IF}}
+
+\DeclareSIUnit{\dBm}{dBm}
 
 %opening
 \title{Communication Systems}
@@ -885,6 +901,14 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\end{align*}
 	Hence, as the autocorrelation function of $Y$ may be dependent on the absolute time, $Y$ may or may not be WSS.
 \end{proof}
+
+\begin{definition}[Circular random process]
+	A stochastic process is said to be circular or proper if
+	\begin{align*}
+		\tilde{R}_{X X^*}(t_1,t_2) &= 0
+	\end{align*}
+	\label{def:circular_random_process}
+\end{definition}
 
 \section{Cyclostationary Processes}
 
@@ -2339,6 +2363,1205 @@ A matched filter for a single pulse, affected by coloured noise, can be implemen
 		\end{adjustbox}
 	\caption{Matched Filter for Coloured Noise Implemented Using a Matched Filter for White Noise}
 	\label{fig:matched_filter_for_coloured_noise_implemented_using_a_matched_filter_for_white_noise}
+\end{figure}
+
+\section{Multiple Pluses with White Noise}
+
+\begin{theorem}
+	For a information signal
+	\begin{align*}
+		s(t) &= \sum\limits_{n = -\infty}^{\infty} b_n p(t - n T)
+	\end{align*}
+	\begin{align*}
+		\overline{H}(\omega) &= H_T(\omega) H_R(\omega)\\
+		&= P(\omega) e^{-j \omega t_0} p^*(\omega)\\
+		&= e^{-j \omega t_0} \left| P(\omega) \right|^2
+	\end{align*}
+	Hence, let
+	\begin{align*}
+		R(\omega) &= \left| P(\omega) \right|^2
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		\overline{s}(t) &= \sum\limits_{n = -\infty}^{\infty} b_n r(t - n T)
+	\end{align*}
+	Hence, in order to have no ISI, $\left| P(\omega) \right|^2$ must satisfy the NISI condition.
+	Hence, a raised cosine signals cannot be used, and root raised cosine pulses must be used.
+\end{theorem}
+
+\section{Single Pulse with Non-binary Levels}
+
+Let $H_i$ where $0 \le i \le m - 1$ be the hypotheses
+\begin{align*}
+	b_i &= l_i
+\end{align*}
+Therefore,
+\begin{align*}
+	\expct\left[ y(t_0) \Big| H_m \right] &= \int\limits_{-\infty}^{\infty} h(\tau) l_m p(t_0 - \tau) \dif \tau\\
+	&= l_m \int\limits_{-\infty}^{\infty} h(\tau) p(t_0 - \tau) \dif \tau
+\end{align*}
+Let
+\begin{align*}
+	\mu &= \int\limits_{-\infty}^{\infty} h(\tau) p(t_0 - \tau) \dif \tau
+\end{align*}
+Therefore,
+\begin{align*}
+	\expct\left[ y(t_0) \Big| H_m \right] &= l_m \mu
+\end{align*}
+Similarly,
+\begin{align*}
+	\var\left( y(t_0) \Big| H_m \right) &= \sigma^2\\
+	&= \frac{N_0}{2} \int\limits_{-\infty}^{\infty} \left| h(\tau) \right|^2 \dif \tau
+\end{align*}
+Therefore, as for the case with binary levels, in order to minimize the probability of a type 1 error, $\frac{|\mu|^2}{\sigma^2}$ should should be maximized.
+Hence, the matched filter is the same as for the case with binary levels, with the comparison with the threshold $\lambda$ replaced by approximation to the nearest $l_i \mu$.
+
+\section{Quadrature Phase Shift Keying}
+
+Consider a complex modulated signal
+\begin{align*}
+	s_{\text{RF}}(t) &= s(t) \cos(\omega_c t)\\
+	&= \Re\left\{ s(t) e^{j \omega_c t} \right\}
+\end{align*}
+where $s(t)$ is the information signal, and $\omega_c$ is the carrier frequency.
+Hence, assuming zero noise, the received signal is
+\begin{align*}
+	x_{\text{RF}}(t) &= s_{\text{RF}}(t)\\
+	&= \Re\left\{ s(t) e^{j \omega_c t} \right\}\\
+	&= \frac{1}{2} s(t) e^{j \omega_c t} + \frac{1}{2} s^*(t) e^{-j \omega_c t}
+\end{align*}
+Let
+\begin{align*}
+	\tilde{y}(t) &= 2 e^{-j \omega_c t} x_{\text{RF}}(t)\\
+	&= s(t) + s(t) e^{-2 j \omega_c t}
+\end{align*}
+Hence, $s(t)$ can be reconstructed from $y(t)$ by applying a LPF with cutoff frequency less than $2 \omega_c$.\\
+This complex multiplication of $x(t)$ with $2 e^{-j \omega_c t}$ can be implemented by splitting $2 e^{-j \omega_c t}$ as
+\begin{align*}
+	2 e^{-j \omega_c t} &= 2 \cos(\omega_c t) - j \left( 2 \sin(\omega_c t) \right)
+\end{align*}
+and then multiplying $x(t)$ separately by the two terms, and treating the first product as the real part, and the second as the imaginary part.
+Hence, $s(t)$ can be reconstructed as in \cref{fig:reconstruction_of_complex_valued_signal_implemented_by_separately_treating_real_and_imaginary_parts}.
+\begin{figure}[H]
+	\centering
+	\begin{adjustbox}{max width=\columnwidth}
+	\begin{tikzpicture}[auto, node distance=2cm,>=latex']
+		\draw (0,0) -- (-1,0) node [left] {$x_{\text{RF}}(t)$};
+
+		\node [mixer] (mixer_real) at (2,2) {};
+		\draw [-stealth] (0,0) |- (mixer_real.west);
+		\draw [stealth-] (mixer_real.north) -- ++(0,1) node [above] {$2 \cos(\omega_c t)$};
+		\node [block] (LPF_real) at (4,2) {LPF};
+		\draw [-stealth] (mixer_real.east) -- (LPF_real.west);
+		\draw [-stealth] (LPF_real.east) -- ++(1,0) node [right] {$\Re\left\{ s(t) \right\}$};
+
+		\node [mixer] (mixer_imaginary) at (2,-2) {};
+		\draw [-stealth] (0,0) |- (mixer_imaginary.west);
+		\draw [stealth-] (mixer_imaginary.south) -- ++(0,-1) node [below] {$-2 \sin(\omega_c t)$};
+		\node [block] (LPF_imaginary) at (4,-2) {LPF};
+		\draw [-stealth] (mixer_imaginary.east) -- (LPF_imaginary.west);
+		\draw [-stealth] (LPF_imaginary.east) -- ++(1,0) node [right] {$\Im\left\{ s(t) \right\}$};
+	\end{tikzpicture}
+	\end{adjustbox}
+	\caption{Reconstruction of Complex Valued Signal Implemented by Separately Treating Real and Imaginary Parts}
+	\label{fig:reconstruction_of_complex_valued_signal_implemented_by_separately_treating_real_and_imaginary_parts}
+\end{figure}
+Hence, as it is possible to use a complex valued information signal, the coding levels can occupy complex values, i.e. for example, the levels $0$ to $3$ can be represented by $\pm \sqrt{0.5} \pm \sqrt{0.5}$.
+Hence, the levels are more loosely packed in QPSK, in comparison with ASK, as in \cref{fig:comparison_of_QPSK_and_ASK_levels}.
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale = 3]
+		\def\xMIN{-2};
+		\def\xMAX{2};
+		\def\yMIN{-2};
+		\def\yMAX{2};
+
+		\begin{scope}[stealth-stealth]
+			\draw (\xMIN,0) -- (\xMAX,0) node [right] {$\Re$};
+			\draw (0,\yMIN) -- (0,\yMAX) node [above] {$\Im$};
+		\end{scope}
+
+		\begin{scope}[blue]
+			\filldraw (45:1) circle (0.5pt) node [above right] {${l_0}_{\text{QPSK}}$};
+			\filldraw (135:1) circle (0.5pt) node [above left] {${l_1}_{\text{QPSK}}$};
+			\filldraw (225:1) circle (0.5pt) node [below left] {${l_2}_{\text{QPSK}}$};
+			\filldraw (315:1) circle (0.5pt) node [below right] {${l_3}_{\text{QPSK}}$};
+		\end{scope}
+
+		\begin{scope}[red]
+			\filldraw (-1,0) circle (0.5pt) node [below] {${l_0}_{\text{ASK}}$};
+			\filldraw (-1/3,0) circle (0.5pt) node [below] {${l_1}_{\text{ASK}}$};
+			\filldraw (1/3,0) circle (0.5pt) node [below] {${l_2}_{\text{ASK}}$};
+			\filldraw (1,0) circle (0.5pt) node [below] {${l_3}_{\text{ASK}}$};
+		\end{scope}
+	\end{tikzpicture}
+	\caption{Comparison of QPSK and ASK Levels}
+	\label{fig:comparison_of_QPSK_and_ASK_levels}
+\end{figure}
+Although QPSK is more immune to noise than ASK, it is sensitive to the phase shift of the transmitter.
+That is, if the transmitter works with $e^{j (\omega_c t + \varphi)}$ instead of $e^{j \omega_c t}$, the reconstructed signal will be shifted by $\varphi$ with respect to the original signal.\\
+This can be resolved by using a predetermined training sequence, known to both the transmitter and the receiver, to synchronize the phase shift.
+
+\begin{question}
+	\begin{figure}[H]
+		\centering
+		\begin{adjustbox}{max width = \textwidth}
+		\begin{tikzpicture}
+			\node [block] (quantizer) at (1,0) {Quantizer};
+			\draw [stealth-] (quantizer.west) -- ++(-1,0) node [left] {$m(t)$};
+			\node [block] (pulse) at (6,0) {$p(t)$};
+			\draw [-stealth] (quantizer.east) -- (pulse.west) node [midway, above] {$\sum\limits_{n = -\infty}^{\infty} b_n \delta(t - n T)$};
+			\node [adder] (noise_adder) at (9,0) {};
+			\draw [-stealth] (pulse.east) -- (noise_adder.west) node [midway, above] {$s(t)$};
+			\draw [stealth-] (noise_adder.south) -- ++(0,-1) node [below] {$v(t)$};
+			\node [block] (matched_filter) at (13,0) {$h(t)$};
+			\draw [-stealth] (noise_adder.east) -- (matched_filter.west) node [midway, above] {$x(t)$};
+			\node [block] (decision_rule) at (19,0) {Decision Rule};
+			\draw (matched_filter) -- ++(2,0) node [midway, above] {$y(t)$} to [closing switch = $t_n$] ($ (decision_rule.west) + (-2,0) $) -- (decision_rule.west) node [midway, above] {$y(t_n)$};
+			\draw [-stealth] (decision_rule.east) -- ++(1,0) node [right] {$\hat{b_n}$};
+		\end{tikzpicture}
+		\end{adjustbox}
+	\end{figure}
+	Consider a communication scheme as shown, where
+	\begin{itemize}
+		\item
+			$m(t)$ is uniformly distributed between $-1$ and $1$
+		\item
+			The quantizer is a four level MMSE quantizer with Gray coding
+		\item
+			$v(t)$ is white Gaussian noise with zero mean and variance $\frac{N_0}{2}$
+		\item
+			\begin{align*}
+				T &= \frac{3}{2}
+			\end{align*}
+		\item
+			\begin{align*}
+				p(t) &= u(t) - u(t - 2)
+			\end{align*}
+	\end{itemize}
+	\begin{enumerate}
+		\item
+			Find
+			\begin{align*}
+				P(\omega) &= \FT\left\{ p(t) \right\}
+			\end{align*}
+		\item
+			Find $h(t)$ such that the error probability is minimal.
+		\item
+			Given
+			\begin{align*}
+				m(0) &= 0.11\\
+				m(T) &= 0.53\\
+				m(2 T) &= -0.41\\
+				m(3 T) &= -0.9\\
+				\tilde{v}(t_0 + T) &= 0.4
+			\end{align*}
+			find the estimated symbol at the receiver for $m(T)$.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}
+		\item
+			\begin{align*}
+				p(t) &= \rect\left( \frac{t - 1}{2} \right)
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				P(\omega) &= \FT\left\{ \rect\left( \frac{t - 1}{2} \right) \right\}\\
+				&= e^{-j \omega} \FT\left\{ \rect\left( \frac{t}{2} \right) \right\}\\
+				&= 2 e^{-j \omega} \sinc(\omega)
+			\end{align*}
+		\item
+			\begin{align*}
+				H(\omega) &= e^{-j t_0 \omega} P^*(\omega)\\
+				&= e^{-2 j \omega} 2 e^{-j \omega} \sinc(\omega)\\
+				&= 2 e^{-j \omega} \sinc(\omega)\\
+				&= P(\omega)
+			\end{align*}
+		\item
+			Let the quantization values be between $0$ and $1$.
+			Therefore,
+			\begin{align*}
+				l_0 &= 0\\
+				l_1 &= \frac{1}{3}\\
+				l_2 &= \frac{2}{3}\\
+				l_3 &= 1
+			\end{align*}
+			Therefore, according to the given values of $m(n T)$,
+			\begin{align*}
+				b_0 &= \frac{2}{3}\\
+				b_1 &= 1\\
+				b_2 &= \frac{1}{3}\\
+				b_3 &= 0
+			\end{align*}
+			As $m(T)$ is obtained from
+			\begin{align*}
+				y(t_0 + T) &= \tilde{s}(t_0 + T) + \tilde{v}(t_0 + T)\\
+				&= \left. \sum\limits_{n = -\infty}^{\infty} b_n \tilde{h}(t - n T) \right|_{t_0 - n T} + 0.4\\
+				&= \left( \frac{1}{2} b_0 + 2 b_1 + \frac{1}{2} b_2 \right) + 0.4\\
+				&= \frac{1}{3} + 2 + \frac{1}{6} + 0.4\\
+				&= 2.9
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\tilde{l_1} &= \argmin\limits_{l_n \in \left\{ 0, \frac{1}{3}, \frac{2}{3}, 1 \right\}} \left| \mu l_n - \tilde{y}(t_0 + T) \right|\\
+				\tilde{l_1} &= \argmin\limits_{l_n \in \left\{ 0, \frac{1}{3}, \frac{2}{3}, 1 \right\}} \left| 2 l_n - 2.9 \right|\\
+				&= l_3\\
+				&= 1
+			\end{align*}
+			Therefore,
+			\begin{align*}
+				\tilde{s_1} &= 0.75
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\section{Delta Pulse Code Modulation}
+
+\begin{definition}[Delta PCM]
+	A modulation in which the difference between the current data and the previous data is transmitted, rather than transmitting the data itself, is called delta pulse code modulation.
+\end{definition}
+
+A naïve implementation of delta PCM is as in \cref{fig:conceptual_implementation_of_PCM_transmitter} and \cref{fig:implementation_of_PCM_receiver}.
+However, in such an implementation, the transmitter predictor and the receiver predictor operated based on $u_{n - 1}$ and $\tilde{u_{n - 1}}$ respectively, their outputs may differ.
+As there is no way to fix the discrepancy between these errors, this error between the prediction errors accumulates.\\
+This can be corrected by implementing the transmitter as in \cref{fig:practical_implementation_of_PCM_transmitter}.
+In such an implementation, the discrepancy can be fixed by anticipating the error between errors, and using the same inputs for the transmitter predictor as the receiver predictor.
+
+\begin{figure}[H]
+	\centering
+	\begin{adjustbox}{max width = \textwidth}
+	\begin{tikzpicture}
+		\node [block] (sampler) at (1,0) {sampler};
+		\node [block] (delay) at (3,-2) {$z^{-1}$};
+		\node [block] (predictor) at (5,-4) {predictor};
+		\node [adder] (adder) at (7,0) {};
+		\node [block] (quantizer) at (9,0) {$Q_m$};
+		\node [block] (PCM_mod) at (14,0) {PCM modulator};
+
+		\draw [stealth-] (sampler.west) -- ++(-1,0) node [left] {$u(t)$};
+		\draw [-stealth] (sampler.east) -- (adder.west) node [midway, above] {$u_n$};
+		\node [above left] at (adder.west) {$+$};
+		\draw [-stealth] (sampler.east) -| (delay.north);
+		\draw [-stealth] (delay.south) |- (predictor.west) node [midway, below left] {$u_{n - 1}$};
+		\draw [-stealth] (predictor.east) -| (adder.south) node [midway, below right] {$\hat{u_n}$};
+		\node [below right] at (adder.south) {$-$};
+		\draw [-stealth] (adder.east) -- (quantizer.west) node [midway, above] {$e_n$};
+		\draw [-stealth] (quantizer.east) -- (PCM_mod.west) node [midway, above] {$\tilde{e_n} = e_n + q_n$};
+		\draw [-stealth] (PCM_mod.east) -- ++(1,0) node [right] {$x_{\text{PCM}}(t)$};
+	\end{tikzpicture}
+	\end{adjustbox}
+	\caption{Conceptual Implementation of PCM Transmitter}
+	\label{fig:conceptual_implementation_of_PCM_transmitter}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{adjustbox}{max width = \textwidth}
+	\begin{tikzpicture}
+		\node [block] (PCM_demod) at (0,0) {PCM demodulator};
+		\node [adder] (adder) at (5,0) {};
+		\node [block] (predictor) at (7,-4) {predictor};
+		\node [block] (delay) at (9,-2) {$z^{-1}$};
+		\node [block] (DAC) at (11,0) {D/A, D/C};
+
+		\draw [stealth-] (PCM_demod.west) -- ++(-1,0) node [left] {$x_{\text{PCM}}(t)$};
+		\draw [-stealth] (PCM_demod.east) -- (adder.west) node [midway, above] {$\tilde{e_n} = e_n + q_n$};
+		\draw [stealth-] (adder.south) |- (predictor.west) node [midway, below left] {$\tilde{\hat{u_n}}$};
+		\draw [stealth-] (predictor.east) -| (delay.south) node [midway, below right] {$\tilde{u_{n - 1}}$};
+		\draw [stealth-] (delay.north) |- (adder.east);
+		\draw [-stealth] (adder.east) -- (DAC.west) node [midway, above] {$\tilde{u_n}$};
+		\draw [-stealth] (DAC.east) -- ++(1,0) node [right] {$\tilde{u}(t)$};
+	\end{tikzpicture}
+	\end{adjustbox}
+	\caption{Implementation of PCM Receiver}
+	\label{fig:implementation_of_PCM_receiver}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{adjustbox}{max width = \textwidth}
+	\begin{tikzpicture}
+		\node [block] (sampler) at (1,0) {sampler};
+		\node [adder] (adder_1) at (3,0) {};
+		\node [block] (quantizer) at (5,0) {$Q_m$};
+		\node [block] (delay_1) at (8,-2) {$z^{-1}$};
+		\node [block] (predictor) at (5,-4) {predictor};
+		\node [block] (delay_2) at (5,-6) {$z^{-1}$};
+		\node [adder] (adder_2) at (8,-4) {};
+
+		\node [block] (PCM_mod) at (12,0) {PCM modulator};
+
+		\draw [stealth-] (sampler.west) -- ++(-1,0) node [left] {$u(t)$};
+		\draw [-stealth] (sampler.east) -- (adder_1.west) node [midway, above] {$u_n$};
+		\draw [-stealth] (adder_1.east) -- (quantizer.west) node [midway, above] {$e_n$};
+		\draw [-stealth] (quantizer.east) -- (PCM_mod.west) node [midway, above] {$\tilde{e_n} = e_n + q_n$};
+		\draw [-stealth] (quantizer.east) -| (delay_1.north);
+		\draw [-stealth] (delay_1.south) -- (adder_2.north) node [midway, right] {$\tilde{e_{n - 1}}$};
+		\draw [-stealth] (adder_2.west) -- (predictor.east) node [midway, above] {$\tilde{u_{n - 1}}$};
+		\draw [-stealth] (predictor.west) -| (adder_1.south) node [midway, left] {$\tilde{\hat{u_n}}$};
+		\draw [-stealth] (predictor.west) -- (3,-4) |- (delay_2.west);
+		\draw [-stealth] (delay_2.east) -| (adder_2.south) node [midway, below right] {$\tilde{\hat{u_{n - 1}}}$};
+	\end{tikzpicture}
+	\end{adjustbox}
+	\caption{Practical Implementation of PCM Transmitter}
+	\label{fig:practical_implementation_of_PCM_transmitter}
+\end{figure}
+
+\section{Delta Modulation}
+
+\begin{definition}[Delta modulation]
+	A modulation scheme in which the sign of the difference between the data at a particular time and that of the previous time is transmitted is called delta modulation.
+	Hence, a value of $+\Delta$ is transmitted if the data point is higher than the previous data point, and a value of $-\Delta$ is transmitted if it is lower.
+\end{definition}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node [adder] (adder) at (1,0) {};
+		\node [block] (relay) at (5,0) {$\pm \Delta$ relay};
+		\node [block] (integrator_amplifier) at (8,-2) {integrator and amplifier};
+
+		\draw [-stealth] (adder.west) -- ++(-1,0) node [left] {$u(t)$};
+		\draw [-stealth] (adder.east) -- (relay.west) node [midway, above] {$e(t)$};
+		\draw (relay.east) to [closing switch = ZOH with $t_n {=} n T$] (11,0);
+		\draw [-stealth] (11,0) |- (integrator_amplifier.east);
+		\draw [-stealth] (integrator_amplifier.west) -| (adder.south);
+		\draw [-stealth] (11,0) -- ++(1,0) node [right] {$\pm \Delta$};
+	\end{tikzpicture}
+	\caption{Delta Modulation Transmitter}
+	\label{fig:delta_modulation_transmitter}
+\end{figure}
+
+As the transmitted values are $\pm \Delta$, the reconstructed signal changes by a large amount even if the real signal changes by a very small amount.
+This results in large oscillations in the reconstruction when the input is relatively constant.
+This phenomenon is called granular noise.\\
+Also, if the real signal increases very rapidly, hence the reconstructed signal cannot keep up with the rate of increase, and results in a slower response.
+This phenomenon is called slope overload noise.
+
+\section{Complex Envelope Representation of Band Pass Signals}
+
+\begin{definition}[Band pass signal]
+	A signal whose spectrum is around some high frequency $\omega_c$, such that the bandwidth $B$ of the signal is much smaller than $\omega_c$, is called a band pass signal.
+\end{definition}
+
+\begin{definition}
+	A complex function
+	\begin{align*}
+		g(t) &= x(t) + j x(t)
+	\end{align*}
+	is said to be the complex envelope of a band pass signal $v(t)$, if
+	\begin{align*}
+		v(t) &= \Re\left\{ g(t) e^{j \omega_c t} \right\}\\
+		&= \frac{1}{2} g(t) e^{j \omega_c t} + \frac{1}{2} g^*(t) e^{-j \omega_c t}
+	\end{align*}
+	Hence,
+	\begin{align*}
+		x(t) &= \Re\left\{ g(t) \right\}
+	\end{align*}
+	is called the in-phase component of $v(t)$, and
+	\begin{align*}
+		y(t) &= \Im\left\{ g(t) \right\}
+	\end{align*}
+	is called the quadrature component of $v(t)$.
+\end{definition}
+
+\begin{theorem}
+	A band pass signal $v(t)$ can be represented as
+	\begin{align*}
+		v(t) &= R(t) \cos\left( \omega_c t + \varphi(t) \right)
+	\end{align*}
+	where
+	\begin{align*}
+		R(t) &= \sqrt{x^2(t) + y^2(t)}\\
+		\varphi(t) &= \atan2\left( y(t),x(t) \right)
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}
+	For a bandpass signal $v(t)$ with complex envelope $g(t)$,
+	\begin{align*}
+		V(\omega) &= \frac{1}{2} G(\omega - \omega_c) + \frac{1}{2} G^*\left( -(\omega + \omega_c) \right)\\
+		\tilde{R}_{v v}(t_1,t_2) &= \frac{1}{2} \Re\left\{ \tilde{R}_{g g}(t_1,t_2) e^{j \omega_c (t_1 - t_2)} + \tilde{R}_{g g^*}(t_1,t_2) e^{j \omega_c (t_1 + t_2)} \right\}
+	\end{align*}
+	and if $g(t)$ is WSS and circular\footnote{See \cref{def:circular_random_process}.},
+	\begin{align*}
+		R_{v v}(\tau) &= \frac{1}{4} \left( R_{g g}(\tau) e^{j \omega_c \tau} + R_{g g^*}(\tau) e^{-j \omega_c \tau} \right)
+	\end{align*}
+	and hence
+	\begin{align*}
+		S_{v v}(\omega) &= \frac{1}{4} \left( S_{g g}(\omega - \omega_c) + S_{g g}^*\left( -(\omega + \omega_c) \right) \right)\\
+		S_{v v}(\omega) &= \frac{1}{4} \left( S_{g g}(\omega - \omega_c) + S_{g g}\left( -(\omega + \omega_c) \right) \right)
+	\end{align*}
+\end{theorem}
+
+\begin{theorem}
+	Let $v(t)$ be a band pass signal with complex envelope $g(t)$.
+	If $v(t)$ and $g(t)$ are deterministic,
+	\begin{align*}
+		E_v &= \frac{1}{2} E_g
+	\end{align*}
+	where $E_v$ and $E_g$ are the energies of $v(t)$ and $g(t)$, respectively.\\
+	If $v(t)$ and $g(t)$ are stochastic,
+	\begin{align*}
+		P_v &= \frac{1}{2} P_g
+	\end{align*}
+	where $P_v$ and $P_g$ are the powers of $v(t)$ and $g(t)$, respectively.
+\end{theorem}
+
+\begin{proof}
+	If $v(t)$ and $g(t)$ are deterministic, the energy of $v(t)$ is
+	\begin{align*}
+		E_v &= \int\limits_{-\infty}^{\infty} v^2(t) \dif t\\
+		&= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} \left| V(\omega) \right|^2 \dif \omega\\
+		&= \int\limits_{-\infty}^{\infty} \left| \tilde{V}(f) \right| \dif f\\
+		&= 2 \int\limits_{-\infty}^{\infty} \left| \frac{1}{2} \tilde{G}(f) \right|^2 \dif f\\
+		&= \frac{1}{2} \int\limits_{-\infty}^{\infty} \left| \tilde{G}(f) \right|^2 \dif f\\
+		&= \frac{E_g}{2}
+	\end{align*}
+	If $v(t)$ and $g(t)$ are stochastic, the power of $v(t)$ is
+	\begin{align*}
+		P_v &= \expct\left[ v^2(t) \right]\\
+		&= R_{v v}(0)\\
+		&= \frac{1}{2 \pi} \int\limits_{-\infty}^{\infty} S_{v v}(\omega) \dif \omega\\
+		&= \int\limits_{-\infty}^{\infty} \tilde{S}_{v v}(f) \dif f\\
+		&= 2 \int\limits_{-\infty}^{\infty} \frac{1}{4} \tilde{S}_{g g}(f) \dif f\\
+		&= \frac{1}{2} \int\limits_{-\infty}^{\infty} \tilde{S}_{g g}(f) \dif f\\
+		&= \frac{1}{2} P_g
+	\end{align*}
+\end{proof}
+
+\begin{question}
+	Consider a band pass signal
+	\begin{align*}
+		v(t) &= A \sin(\omega_0 t) \cos\left( \omega_c t +  m(t) \right)
+	\end{align*}
+	where
+	\begin{align*}
+		m(t) &= 10 \pi t
+	\end{align*}
+	\begin{enumerate}
+		\item
+			Find the complex envelope $g(t)$ of $v(t)$.
+		\item
+			Find the in-phase and quadrature components $x(t)$ and $y(t)$ of $v(t)$.
+		\item
+			Find $G(\omega)$ and $V(\omega)$.
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}
+		\item
+			\begin{align*}
+				v(t) &= \Re\left\{ A \sin(\omega_0 t) e^{j \left( \omega_c t + m(t) \right)} \right\}\\
+				&= \Re\left\{ \left( A \sin(\omega_0 t) e^{j m(t)} \right) e^{j \omega_c t} \right\}
+			\end{align*}
+			Hence,
+			\begin{align*}
+				g(t) &= A \sin(\omega_0 t) e^{j m(t)}\\
+				&= A \sin(\omega_0 t) e^{j 10 \pi t}
+			\end{align*}
+		\item
+			\begin{align*}
+				x(t) &= \Re\left\{ g(t) \right\}\\
+				&= \Re\left\{ \sin(\omega_0 t) e^{j 10 \pi t} \right\}\\
+				&= A \sin(\omega_0 t) \cos(10 \pi t)\\
+				y(t) &= \Im\left\{ g(t) \right\}\\
+				&= \Im\left\{ \sin(\omega_0 t) e^{j 10 \pi t} \right\}\\
+				&= A \sin(\omega_0 t) \sin(10 \pi t)
+			\end{align*}
+		\item
+			\begin{align*}
+				G(\omega) &= \FT\left\{ g(t) \right\}\\
+				&= \FT\left\{ A \sin(\omega_0 t) e^{j 10 \pi t} \right\}\\
+				&= A \FT\left\{ \sin(\omega_0 t) e^{j 10 \pi t} \right\}\\
+				&= A \FT\left\{ \sin(\omega_0 t) \right\} \Big|_{\omega = 10 \pi}\\
+				&= \frac{A \pi}{j} \left( \delta(\omega - 10 \pi - \omega_0) - \delta(\omega - 10 \pi + \omega_0) \right)\\
+				&= j A \omega \left( \delta(\omega - 10 \pi + \omega_0) - \delta(\omega - 10 \pi - \omega_0) \right)
+			\end{align*}
+			Similarly,
+			\begin{align*}
+				V(\omega) &= \FT\left\{ v(t) \right\}\\
+				&= \frac{1}{2} \left( G(\omega - \omega_c) + G^*(-\omega - \omega_c) \right)\\
+				&= \frac{j A \pi}{2} \left( \quad \delta(\omega - \omega_c - 10 \pi + \omega_0) - \delta(\omega - \omega_c - 10 \pi - \omega_0) \right.\\
+				&\quad\quad\quad\quad \left. + \delta(-\omega - \omega_c - 10 \pi - \omega_0) - \delta(-\omega - \omega_c - 10 \pi + \omega_0) \right)\\
+				&= \frac{j A \pi}{2} \left( \quad \delta\left( \omega - (10 \pi - \omega_0 + \omega_c) \right) - \delta\left( \omega - (10 \pi + \omega_0 + \omega_c) \right) \right.\\
+				&\quad\quad\quad\quad \left. - \delta\left( \omega - (-10 \pi + \omega_0 - \omega_c) \right) + \delta\left( \omega - (-10 \pi - \omega_0 - \omega_c) \right) \right)
+			\end{align*}
+	\end{enumerate}
+\end{solution}
+
+\begin{question}
+	Let $g(t)$ be complex random process with mean $\tilde{\eta}_g(t)$, ACF $\tilde{R}_{g g}(t_1,t_2)$, and pseudo ACF $\tilde{R}_{g g^*}(t_1,t_2)$.
+	\begin{enumerate}
+		\item
+			Compute $\tilde{\eta}_v(t)$ and $\tilde{R}_{v v^*}(t_1,t_2)$
+		\item
+			Given
+			\begin{align*}
+				\tilde{\eta_g}(t) &= 0\\
+				\tilde{R}_{g g}(t_1,t_2) &= \tilde{R}_{g g}(t_1 - t_2)
+			\end{align*}
+			is $v(t)$ WSS?
+	\end{enumerate}
+\end{question}
+
+\begin{solution}
+	\begin{enumerate}
+		\item
+			\begin{align*}
+				\tilde{\eta}_v(t) &= \expct\left[ v(t) \right]\\
+				&= \expct\left[ \Re\left\{ g(t) e^{j \omega_c t} \right\} \right]\\
+				&= \expct\left[ \frac{1}{2} g(t) e^{j \omega_c t} + \frac{1}{2} g^*(t) e^{-j \omega_c t} \right]\\
+				&= \frac{1}{2} \tilde{\eta}_g(t) e^{j \omega_c t} + \frac{1}{2} {\tilde{\eta}_g}^*(t) e^{-j \omega_c t}\\
+				&= \Re\left\{ \tilde{\eta}_g(t) e^{j \omega_c t} \right\}
+			\end{align*}
+			Similarly,
+			\begin{align*}
+				\tilde{R}_{v v^*}(t_1,t_2) &= \expct\left[ \left( \frac{1}{2} g(t_1) e^{j \omega_c t_1} + \frac{1}{2} g^*(t_1) e^{-j \omega_c t_1} \right) \right.\\
+				&\quad\quad \left. \left( \frac{1}{2} g^*(t_2) e^{-j \omega_c t_2} + \frac{1}{2} g(t_2) e^{-j \omega_c t_2} \right) \right]\\
+				&= \frac{1}{2} \Re\left\{ \tilde{R}_{g g}(t_1,t_2) e^{j \omega_c (t_1 + t_2)} + \tilde{R}_{g g^*}(t_1,t_2) e^{j \omega_c (t_1 + t_2)} \right\}
+			\end{align*}
+		\item
+			\begin{align*}
+				\tilde{\eta}_v(t) &= \Re\left\{ \tilde{\eta}_g(t) e^{j \omega_c t} \right\}\\
+				&= 0\\
+				&= \eta_v\\
+				\tilde{R}_{v v}(t_1,t_2) &= \frac{1}{2} \Re\left\{ \tilde{R}_{g g}(t_1 - t_2) e^{j \omega_c (t_1 - t_2)} + \tilde{R}_{g g^*}(t_1,t_2) e^{j \omega_c (t_1 + t_2)} \right\}
+			\end{align*}
+			Hence, as the ACF is dependent on $t_1 + t_2$, $v(t)$ is not WSS
+	\end{enumerate}
+\end{solution}
+
+\clearpage
+\part{Noise}
+
+\section{Thermal Noise}
+
+\begin{theorem}
+	Thermal noise can be modelled as white Gaussian noise $n(t)$ with spectral level $\frac{N_0}{2}$, i.e.
+	\begin{align*}
+		N(\omega) &= \frac{N_0}{2}
+	\end{align*}
+	where
+	\begin{align*}
+		N_0 &= K T
+	\end{align*}
+	where $K$ is the Boltzmann constant, and $T$ is the absolute temperature.
+	Hence, at $\SI{290}{\kelvin}$,
+	\begin{align*}
+		N_0 &= \SI{4e-21}{\watt\per\hertz}\\
+		&= \SI{4e-18}{\milli\watt\per\hertz}\\
+		&= \SI{4e-12}{\milli\watt\per\mega\hertz}\\
+		&= \SI{-114}{\dBm\per\mega\hertz}
+	\end{align*}
+	Hence, the power corresponding to thermal noise is
+	\begin{align*}
+		P_{\text{noise}} &= N_0 B
+	\end{align*}
+	Equivalently, the power is the sum of $N_0$ and the bandwidth, both expressed in decibels.
+\end{theorem}
+
+\begin{question}
+	What is the power corresponding to a noise with bandwidth $\SI{2}{\mega\hertz}$ at $\SI{290}{\kelvin}$?
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		P &= N_0 B\\
+		&= -114 + 3\\
+		&= \SI{-111}{\dBm}
+	\end{align*}
+\end{solution}
+
+\begin{question}
+	Given a white Gaussian thermal noise at $\SI{290}{\kelvin}$ going through a BPF with a unilateral width of
+	\begin{align*}
+		B &= \SI{4}{\mega\hertz}
+	\end{align*}
+	what is the power of the output noise?
+\end{question}
+
+\begin{solution}
+	\begin{align*}
+		P_{\text{out}} &= N_0 B\\
+		&= \left( \SI{4e-12}{\milli\watt\per\mega\hertz} \right) (\SI{4}{\mega\hertz})\\
+		&= \SI{1.6e-11}{\milli\watt}
+	\end{align*}
+	Equivalently,
+	\begin{align*}
+		(P_{\text{out}})_{\decibel} &= N_0 B\\
+		&= (N_0)_{\decibel} + B_{\decibel}\\
+		&= \SI{-114}{\dBm\per\mega\hertz} + \SI{6}{\decibel\mega\hertz}\\
+		&= \SI{-108}{\dBm}
+	\end{align*}
+\end{solution}
+
+\section{Component Noise Model}
+
+\begin{definition}[Signal to noise ratio]
+	The signal to noise ratio is defined to be the ratio of the powers of the signal and the noise, i.e.
+	\begin{align*}
+		\SNR &= \frac{S}{N}
+	\end{align*}
+	where $S$ and $N$ are the powers of the signal and the noise, respectively.
+\end{definition}
+
+\begin{definition}[Noise figure]
+	A component's noise figure is defined to be the SNR degradation inflicted by the component, i.e.
+	\begin{align*}
+		F &= \frac{\frac{S_{\text{in}}}{N_{\text{in}}}}{\frac{S_{\text{out}}}{N_{\text{out}}}}
+	\end{align*}
+	where the $S$s and $N$s are the powers of the corresponding signals and noises.
+\end{definition}
+
+\begin{theorem}
+	A typical RF component can be modelled as in \cref{fig:model_of_RF_component_for_noise_calculations}.
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}
+			\node [buffer] (amplifier) at (4,0) {};
+			\node [adder] (adder) at (2,0) {};
+			\draw [-stealth] (1,-3) rectangle (5,2);
+			\draw [-stealth] (0,0) node [left] {$x(t)$} -- (adder.west);
+			\draw [stealth-] (adder.south) -- ++(0,-1) node [below] {$n_l(t)$};
+			\draw [-stealth] (adder.east) -- (amplifier.in);
+			\draw [-stealth] (amplifier.out) -- (6,0) node [right] {$y(t)$};
+			\node at (4,-1) {$G$};
+		\end{tikzpicture}
+		\caption{Model of RF component for Noise Calculations}
+		\label{fig:model_of_RF_component_for_noise_calculations}
+	\end{figure}
+	Hence,
+	\begin{align*}
+		F &= 1 + \frac{N_l}{N_{\text{in}}}\\
+		&= 1 + \frac{T_l}{T_{\text{in}}}
+	\end{align*}
+	where $T_l$ is the equivalent temperature of the internal noise, i.e. the temperature at which the thermal noise is equal to the internal noise for the component, and $T_{\text{in}}$ is the equivalent temperature of the input noise.
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		S_{\text{out}} &= G S_{\text{in}}\\
+		N_{\text{out}} &= G (N_{\text{in}} + N_l)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		F &= \frac{\frac{S_{\text{in}}}{N_{\text{in}}}}{\frac{S_{\text{out}}}{N_{\text{out}}}}\\
+		&= \frac{N_{\text{in}} + N_l}{N_{\text{in}}}\\
+		&= 1 + \frac{N_l}{N_{\text{in}}}\\
+		&= 1 + \frac{T_l}{T_{\text{in}}}
+	\end{align*}
+	Therefore, let $T_l$ be the equivalent temperature of the internal noise, i.e. the temperature at which the thermal noise is equal to the internal noise for the component.
+	Similarly, let $T_{\text{in}}$ be the equivalent temperature of the input noise.
+\end{proof}
+
+\begin{definition}
+	\begin{align*}
+		F_0 &= 1 + \frac{T_l}{T_0}
+	\end{align*}
+	where
+	\begin{align*}
+		T_0 &= \SI{290}{\kelvin}
+	\end{align*}
+\end{definition}
+
+\begin{theorem}
+	For passive components, i.e. with $G < 1$, $T_l$ is usually assumed to be $T_0$, and hence,
+	\begin{align*}
+		S_{\text{out}} &= \frac{1}{A}\\
+		N_{\text{out}} &= N_{\text{in}}
+	\end{align*}
+	where $A$ is the attenuation.
+\end{theorem}
+
+\begin{theorem}[Frii's Formula]
+	For a chain of components with parameters $G_i$, $N_i$, $F_i$, the equivalent parameters are
+	\begin{align*}
+		\overline{G} &= \prod\limits_{i = 1}^{L} G_i\\
+		\overline{F} &= \sum\limits_{i = 1}^{L} \frac{1}{\prod\limits_{j = 1}^{i - 1} G_j} (F_i - 1)
+	\end{align*}
+\end{theorem}
+
+\section{Narrowband Noise}
+
+\begin{theorem}
+	Let $n(t)$ be a narrowband noise obtained by passing a white Gaussian noise through band pass filter with unilateral width $B$.
+	Hence, let
+	\begin{align*}
+		v_c(t) &= n(t) \left( 2 \cos(\omega_0 t + \theta) \right)\\
+		v_s(t) &= n(t) \left( 2 \sin(\omega_0 t + \theta) \right)
+	\end{align*}
+	Hence, let $x(t)$ and $y(t)$ be the signals obtained by filtering $v_c(t)$ and $v_s(t)$, respectively, by low pass filters of widths $\frac{B}{2}$.\\
+	Then, $v_c(t)$ and $v_s(t)$ are Gaussian but not WSS, and $x(t)$ and $y(t)$ are Gaussian and WSS.
+	Also, if
+	\begin{align*}
+		S_{n n} &= P(\omega - \omega_0) + \overline{P}(\omega - \omega_0)
+	\end{align*}
+	where
+	\begin{align*}
+		\overline{P}(\omega) &= P(-\omega)
+	\end{align*}
+	then
+	\begin{align*}
+		S_{x x} &= P(\omega) + \overline{P}(\omega)\\
+		S_{y y} &= P(\omega) + \overline{P}(\omega)\\
+		S_{x y} &= j \left( \overline{P}(\omega) - P(\omega) \right)
+	\end{align*}
+	Also,
+	\begin{align*}
+		\expct\left[ x^2(t) \right] &= \expct\left[ y^2(t) \right]\\
+		&= \expct\left[ n^2(t) \right]\\
+		&= N_0 \int\limits_{-\infty}^{\infty} P(\omega) \dif \omega
+	\end{align*}
+\end{theorem}
+
+\clearpage
+\part{Analogue Modulation Schemes}
+
+\section{Double Side Band Modulation}
+
+\begin{definition}[DSB modulation]
+	A modulation scheme in which the information signal $m(t)$ is multiplied by $A \cos(\omega_0 t + \varphi)$ where $\omega_0$ is the carrier frequency, in order to obtain the modulated signal, is called double side band or DSB modulation.
+	Hence,
+	\begin{align*}
+		v(t) &= A m(t) \cos(\omega_0 t + \varphi)
+	\end{align*}
+\end{definition}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node [mixer] (mixer) at (2,0) {};
+		\draw [stealth-] (mixer.west) -- ++(-1,0) node [left] {$m(t)$};
+		\draw [stealth-] (mixer.south) -- ++(0,-1) node [below] {$A \cos(\omega_0 t)$};
+		\draw [-stealth] (mixer.east) -- ++(1,0) node [right] {$v(t)$};
+	\end{tikzpicture}
+	\caption{DSB Transmitter}
+	\label{fig:DSB_transmitter}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node [mixer] (mixer) at (2,0) {};
+		\draw [stealth-] (mixer.west) -- ++(-1,0) node [left] {$v(t)$};
+		\draw [stealth-] (mixer.south) -- ++(0,-1) node [below] {$2 \cos(\omega_0 t + \varphi_1)$};
+		\draw [-stealth] (mixer.east) -- ++(1,0) node [right] {$\tilde{m}(t)$};
+	\end{tikzpicture}
+	\caption{DSB Receiver}
+	\label{fig:DSB_receiver}
+\end{figure}
+
+\begin{theorem}
+	Let $m(t)$ be modulated with DSB modulation, such that
+	\begin{align*}
+		v(t) &= A m(t) \cos(\omega_0 t + \varphi)
+	\end{align*}
+	Then, if $m(t)$ is deterministic,
+	\begin{align*}
+		V(\omega) &= \frac{A}{2} \left( e^{j \varphi} M(\omega - \omega_0) + e^{-j \varphi} M(\omega + \omega_0) \right)
+	\end{align*}
+	and if $m(t)$ is stochastic, and $\varphi$ uniformly distributed between $0$ and $2 \pi$, and independent of $m(t)$, then
+	\begin{align*}
+		R_{v v}(\tau) &= \frac{A^2}{2} R_{m m}(\tau) \cos(\omega_0 \tau)\\
+		S_{v v}(\omega) &= \frac{A^2}{4} \left( S_{m m}(\omega - \omega_0) + S_{m m}(\omega + \omega_0) \right)
+	\end{align*}
+\end{theorem}
+
+\begin{proof}
+	\begin{align*}
+		v(t) &= A m(t) \frac{1}{2} \left( e^{j (\omega_0 t + \varphi)} + e^{-j (\omega_0 t + \varphi)} \right)\\
+		&= \frac{A}{2} \left( e^{j \varphi} m(t) e^{j \omega_0 t} + e^{-j \varphi} m(t) e^{-j \omega_0 t} \right)
+	\end{align*}
+	Hence, if $m(t)$ is considered to be deterministic, with Fourier transform $M(\omega)$, and assuming $\varphi$ to be deterministic,
+	\begin{align*}
+		V(\omega) &= \frac{A}{2} \left( e^{j \varphi} M(\omega - \omega_0) + e^{-j \varphi} M(\omega + \omega_0) \right)
+	\end{align*}
+	Similarly, if $m(t)$ is considered to be a WSS process, with spectrum $S_{m m}(\omega)$ and ACF $R_{m m}(\tau)$, and assuming $\varphi$ to be deterministic,
+	\begin{align*}
+		R_{v v}(t,\tau) &= \expct\left[ v(t + \tau) v(t) \right]\\
+		&= A^2 \expct\left[ m(t + \tau) \cos\left( \omega_0 (t + \tau) + \varphi) \right) m(t) \cos(\omega_0 t + \varphi) \right]\\
+		&= A^2 R_{m m}(\tau) \cos\left( \omega_0 t + \omega_0 \tau + \varphi \right) \cos(\omega_0 t + \varphi)\\
+		&= \frac{A^2}{2} R_{m m}(\tau) \left( \cos(2 \omega_0 t + \omega_0 \tau + 2 \varphi) + \cos(\omega_0 \tau) \right)
+	\end{align*}
+	Hence, $v(t)$ is cyclostationary with period $\frac{\pi}{\omega_0}$.\\
+	If $\varphi$ is assumed to be uniformly distributed between $0$ and $2 \pi$ and independent of $m(t)$, the ACF of $v(t)$ given $\varphi$ is equal to the ACF of $v(t)$ for a deterministic $\varphi$.
+	Hence,
+	\begin{align*}
+		R_{v v}(t,\tau | \varphi) &= \frac{A^2}{2} R_{m m}(\tau) \left( \cos(2 \omega_0 t + \omega_0 \tau + 2 \varphi) + \cos(\omega_0 \tau) \right)
+	\end{align*}
+	Therefore,
+	\begin{align*}
+		R_{v v}(t,\tau) &= \expct\left[ R_{v v}(t,\tau | \varphi) \right]\\
+		&= \int\limits_{-\infty}^{\infty} R_{v v}(t,\tau | \varphi) \pdf_{\varphi}(\varphi) \dif \varphi\\
+		&= \frac{1}{\pi} \int\limits_{0}^{\pi} R_{v v}(t,\tau | \varphi) \dif \varphi\\
+		&= \frac{1}{\pi} \int\limits_{0}^{\pi} \frac{A^2}{2} R_{m m}(\tau) \left( \cos\left( 2 \omega_0 t + \omega_0 \tau + 2 \varphi \right) + \cos(\omega_0 \tau) \right) \dif \varphi\\
+		&= \frac{A^2}{2} R_{m m}(\tau) \cos(\omega_0 \tau)
+	\end{align*}
+	Hence,
+	\begin{align*}
+		S_{v v}(\omega) &= \FT\left\{ R_{v v}(\tau) \right\}\\
+		&= \FT\left\{ \frac{A^2}{2} R_{m m}(\tau) \frac{1}{2} \left( e^{j \omega_0 \tau} + e^{-j \omega_0 \tau} \right) \right\}\\
+		&= \frac{A^2}{4} \left( S_{m m}(\omega - \omega_0) + S_{m m}(\omega + \omega_0) \right)
+	\end{align*}
+\end{proof}
+
+\begin{align*}
+	u(t) &= v(t) 2 \cos(\omega_0 t + \varphi_1)\\
+	&= A m(t) 2 \cos(\omega_0 t + \varphi) \cos(\omega_0 t + \varphi_1)\\
+	&= A m(t) \left( \cos(2 \omega_0 t + \varphi + \varphi_1) + \cos(\varphi_1 - \varphi) \right)\\
+	&= A m(t) \cos(2 \omega_0 t + \varphi + \varphi_1) + A m(t) \cos(\varphi_1 - \varphi)
+\end{align*}
+Hence, after passing $u(t)$ through the LPF,
+\begin{align*}
+	\tilde{m}(t) &= A m(t) \cos(\varphi_1 - \varphi)
+\end{align*}
+Hence, the receiver reconstructs the signal with an error of $\cos(\varphi_1 - \varphi)$.
+This issue can be solved by sending the carrier frequency along with the modulated signal, as in amplitude modulation.
+
+\section{Amplitude Modulation}
+
+\begin{definition}[Amplitude modulation]
+	A modulation scheme in which the information signal $m(t)$ is modulated such that
+	\begin{align*}
+		v(t) &= A (1 + m(t)) \cos(\omega_0 t + \varphi)
+	\end{align*}
+	is called amplitude modulation.
+\end{definition}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node [mixer] (mixer) at (2,0) {};
+		\node [adder] (adder) at (4,0) {};
+		\draw [stealth-] (mixer.west) -- ++(-1,0) node [left] {$m(t)$};
+		\draw [stealth-] (mixer.south) |- (3,-2);
+		\draw [stealth-] (adder.south) |- (3,-2);
+		\draw (3,-2) -- ++(0,-1) node [below] {$A \cos(\omega_0 t + \varphi)$};
+		\draw (mixer.east) -- (adder.west) node [midway, above] {$m'(t)$};
+		\draw [-stealth] (adder.east) -- ++(1,0) node [right] {$v(t)$};
+	\end{tikzpicture}
+	\caption{AM Transmitter}
+	\label{fig:AM_transmitter}
+\end{figure}
+
+Let
+\begin{align*}
+	m'(t) &= 1 + m(t)
+\end{align*}
+If $m(t)$ is deterministic,
+\begin{align*}
+	\FT\left\{ 1 + m(t) \right\} &= 2 \pi \delta(\omega) + M(\omega)
+\end{align*}
+Therefore,
+\begin{align*}
+	V(\omega) &= \frac{A}{2} \left( 2 \pi \varphi(\omega - \omega_0) + M(\omega - \omega_0) + 2 \pi \varphi(\omega + \omega_0) + M(\omega + \omega_0) \right)
+\end{align*}
+If $m(t)$ is stochastic,
+\begin{align*}
+	R_{m' m'}(\tau) &= \expct\left[ \left( 1 + m(t + \tau) \right) \left( 1 + m(t) \right) \right]\\
+	&= 1 + 2 \eta_m + R_{m m}(\tau)
+\end{align*}
+Usually,
+\begin{align*}
+	\eta_m &= \expct\left[ m(t) \right]\\
+	&= 0
+\end{align*}
+Therefore,
+\begin{align*}
+	R_{m' m'}(\tau) &= 1 + R_{m m}(\tau)
+\end{align*}
+Hence,
+\begin{align*}
+	S_{m' m'}(\omega) &= 2 \pi \delta(\omega) + S_{m m}(\omega)
+\end{align*}
+Therefore, assuming $\varphi$ to be uniformly distributed between $0$ and $2 \pi$,
+\begin{align*}
+	S_{v v}(\omega) &= \frac{A^2}{4} \left( 2 \pi \delta(\omega - \omega_0) + S_{m m}(\omega - \omega_0) + 2 \pi \delta (\omega + \omega_0) + S_{m m}(\omega + \omega_0) \right)
+\end{align*}
+
+In amplitude modulation, the carrier wave is enveloped by $\pm A m'(t)$, i.e. by $\pm A \left( 1 + m(t) \right)$.
+Hence, let the modulation indices be defined as in \cref{def:modulation_indices_for_AM}.
+
+\begin{definition}[Modulation indices for amplitude modulation]
+	\begin{align*}
+		\mu_+ &= \max_{t} m(t)\\
+		\mu_- &= -\min_{t} m(t)\\
+		\mu &= \frac{1}{2} \left( \mu_+ + \mu_- \right)\\
+		&= \frac{1}{2} \left( \max_{t} m(t) - \min_{t} m(t) \right)
+	\end{align*}
+\end{definition}
+
+Hence,
+\begin{align*}
+	\mu_+ &= \frac{\max_{t} v(t) - A}{A}\\
+	\mu_- &= \frac{A - \min_{t} v(t)}{A}
+\end{align*}
+Hence, the signal can be reconstructed using a envelope detector as in \cref{fig:envelope_detector}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\draw (0,0) node [left] {$m(t)$} to [D] (4,0);
+		\draw (4,0) to [R] (4,-2);
+		\draw (6,0) to [C] (6,-2);
+		\draw (4,0) to (8,0) node [right] {$\tilde{m}(t)$};
+		\draw (4,-2) node [ground] {};
+		\draw (6,-2) node [ground] {};
+	\end{tikzpicture}
+	\caption{Envelope Detector}
+	\label{fig:envelope_detector}
+\end{figure}
+
+\begin{definition}[Efficiency index]
+	The efficiency index of AM with respect to DSB is defined to be
+	\begin{align*}
+		\eta &= \frac{\expct\left[ v_{\DSB}^2(t) \right]}{\expct\left[ v_{\AM}^2(t) \right]}
+	\end{align*}
+\end{definition}
+
+\section{Single Side Band Modulation}
+
+\begin{align*}
+	M_L(\omega) &=
+		\begin{cases}
+			M(\omega) &;\quad \omega \le 0\\
+			0 &;\quad \omega > 0\\
+		\end{cases}\\
+	M_U(\omega) &=
+		\begin{cases}
+			0 &;\quad \omega \le 0\\
+			M(\omega) &;\quad \omega > 0\\
+		\end{cases}
+\end{align*}
+Hence,
+\begin{align*}
+	M(\omega) &= M_L(\omega) + M_U(\omega)
+\end{align*}
+Let $v_{\USB}(t)$ and $v_{\LSB}(t)$ be signals such that
+\begin{align*}
+	V_{\USB}(\omega) &= A \left( M_U(\omega - \omega_0) + M_L(\omega + \omega_0) \right)\\
+	V_{\LSB}(\omega) &= A \left( M_L(\omega - \omega_0) + M_U(\omega + \omega_0) \right)\\
+\end{align*}
+Also, let $\hat{M}(\omega)$ be the Hilbert transform of $M(\omega)$, i.e.
+\begin{align*}
+	\hat{M}(\omega) &= -j \sign M(\omega)\\
+	&= j M_L(\omega) - j M_U(\omega)
+\end{align*}
+Therefore,
+\begin{align*}
+	M_U(\omega) &= \frac{1}{2} \left( M(\omega) + j \hat{M}(\omega) \right)\\
+	M_L(\omega) &= \frac{1}{2} \left( M(\omega) - j \hat{M}(\omega) \right)
+\end{align*}
+Therefore,
+\begin{align*}
+	V_{\USB}(\omega) &= A \left( M_U(\omega - \omega_0) + M_L(\omega + \omega_0) \right)\\
+	&= \frac{1}{2} \left( M(\omega - \omega_0) + M(\omega + \omega_0) \right) + \frac{-1}{2 j} \left( \hat{M}(\omega - \omega_0) - \hat{M}(\omega + \omega_0) \right)
+\end{align*}
+Therefore,
+\begin{align*}
+	v_{\USB}(t) &= A \left( m(t) \cos(\omega_0 t) - \hat{m}(t) \sin(\omega_0 t) \right)
+\end{align*}
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node [mixer] (mixer_cos) at (4,2) {};
+		\node [mixer] (mixer_sin) at (6,-2) {};
+		\node [block] (Hilbert) at (2,-2) {$H(\omega)$};
+		\node [adder] (adder) at (8,0) {};
+
+		\draw (-1,0) node [left] {$m(t)$} -- (0,0);
+		\draw [-stealth] (0,0) |- (mixer_cos.west);
+		\draw [-stealth] (0,0) |- (Hilbert.west);
+		\draw [-stealth] (Hilbert.east) -- (mixer_sin.west) node [midway, above] {$\hat{m}(t)$};
+		\draw [-stealth] (mixer_cos.east) -| (adder.north);
+		\draw [-stealth] (mixer_sin.east) -| (adder.south);
+		\draw [-stealth] (adder.east) -- ++(1,0) node [right] {$v_{\USB}(t)$};
+
+		\draw [stealth-] (mixer_cos.north) -- ++(0,1) node [above] {$A \cos(\omega_0 t)$};
+		\draw [stealth-] (mixer_sin.south) -- ++(0,-1) node [below] {$-A \sin(\omega_0 t)$};
+	\end{tikzpicture}
+	\caption{Implementation of USB Transmitter with Hilbert Transformer}
+	\label{fig:implementation_of_USB_transmitter_with_Hilbert_transformer}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node [mixer] (mixer1) at (1,0) {};
+		\node [block] (HPF1) at (4,0) {HPF};
+		\node [mixer] (mixer2) at (7,0) {};
+		\node [block] (HPF2) at (10,0) {HPF};
+
+		\draw [-stealth] (0,0) node [left] {$m(t)$} -- (mixer1.west);
+		\draw [-stealth] (mixer1.east) -- (HPF1.west);
+		\draw [-stealth] (HPF1.east) -- (mixer2.west);
+		\draw [-stealth] (mixer2.east) -- (HPF2.west);
+		\draw [-stealth] (HPF2.east) -- ++(1,0) node [right] {$v_{\USB}(t)$};
+
+		\draw [stealth-] (mixer1.north) -- ++(0,1) node [above] {$2 A \cos(\omega_{\IF} t)$};
+		\draw [stealth-] (mixer2.north) -- ++(0,1) node [above] {$2 A \cos\left( (\omega_0 - \omega_{\IF}) t \right)$};
+	\end{tikzpicture}
+	\caption{Implementation of USB Transmitter with Frequency Domain Slicing}
+	\label{fig:implementation_of_USB_transmitter_with_frequency_domain_slicing}
+\end{figure}
+
+\begin{align*}
+	\tilde{M}(\omega) &= A \left( \cos(\varphi) M(\omega) + \sin(\varphi) \hat{M}(\omega) \right)\\
+	&= A \left( \cos(\varphi) + \sin(\varphi) \left( -j \sign(\omega) \right) \right) M(\omega)\\
+	&=
+		\begin{cases}
+			A M(\omega) e^{j \varphi} &;\quad \omega \le 0\\
+			A M(\omega) e^{-j \varphi} &;\quad \omega > 0\\
+		\end{cases}
+\end{align*}
+
+\clearpage
+\part{Phase Modulations}
+
+\begin{definition}[Phase modulation]
+	Modulation schemes in which the phase of the carrier wave is modulated according to the data signal are called phase modulations.
+	Hence, the modulated signal is
+	\begin{align*}
+		v(t) &= R(t) \cos\left( \omega_0 t + \theta(t) \right)
+	\end{align*}
+\end{definition}
+
+\section{Phase Modulation}
+
+\begin{definition}[Phase modulation]
+	A phase modulation scheme in which the phase is modulated according to the data signal, i.e.
+	\begin{align*}
+		\theta(t) &= D_P m(t)
+	\end{align*}
+	is called phase modulation.
+	Hence,
+	\begin{align*}
+		v(t) &= A \cos\left( \omega_0 t + D_P m(t) \right)
+	\end{align*}
+	where $D_p$ is a constant.
+\end{definition}
+
+\section{Frequency Modulation}
+
+\begin{definition}[Instantaneous frequency]
+	Let
+	\begin{align*}
+		\psi(t) &= \omega_0 t + \theta(t)
+	\end{align*}
+	Hence, the instantaneous frequency is defined to be
+	\begin{align*}
+		f_i &= \frac{1}{2 \pi} \dod{\psi(t)}{t}
+	\end{align*}
+\end{definition}
+
+\begin{definition}[Frequency modulation]
+	A phase modulation scheme in which the phase is modulated according to the data signal, i.e.
+	\begin{align*}
+		\theta(t) &= D_{\omega} \int\limits_{-\infty}^{t} m(\tau) \dif \tau
+	\end{align*}
+	is called frequency modulation.
+	Hence,
+	\begin{align*}
+		\psi(t) &= \omega_0 t + \theta(t)\\
+		&= \omega_0 t + D_{\omega} \int\limits_{-\infty}^{t} m(\tau) \dif \tau\\
+		&= 2 \pi f_0 t + D_{\omega} \int\limits_{-\infty}^{t} m(\tau) \dif \tau
+	\end{align*}
+	Hence, the instantaneous frequency is
+	\begin{align*}
+		f_i(t) &= \frac{1}{2 \pi} \left( 2 \pi f_0 + D_{\omega} m(t) \right)\\
+		&= f_0(t) + \frac{D_{\omega}}{2 \pi} m(t)
+	\end{align*}
+\end{definition}
+
+\begin{theorem}
+	The maximum frequency deviation for a FM signal is
+	\begin{align*}
+		\Delta f &= \frac{D_{\omega}}{2 \pi} \max_{t} \left| m(t) \right|
+	\end{align*}
+\end{theorem}
+
+\begin{definition}
+	For a data signal with frequency $f_m$,
+	\begin{align*}
+		\beta &= \frac{\Delta f}{f_m}
+	\end{align*}
+\end{definition}
+
+\subsection{Narrow Band FM Generation}
+
+\begin{align*}
+	v(t) &= \Re\left\{ g(t) e^{j \omega_0 t} \right\}
+\end{align*}
+where
+\begin{align*}
+	g(t) &= A e^{j \theta(t)}
+\end{align*}
+Let
+\begin{align*}
+	\left| \theta(t) \right| &<< 1
+\end{align*}
+Therefore,
+\begin{align*}
+	g(t) &= A \left( 1 + j \theta(t) \right)
+\end{align*}
+Therefore,
+\begin{align*}
+	v(t) &= \Re\left\{ g(t) e^{j \omega_0 t} \right\}\\
+	&= \Re\left\{ A \left( 1 + j \theta(t) \right) \left( \cos(\omega_0 t) + j \sin(\omega_0 t) \right) \right\}\\
+	&= A \left( \cos(\omega_0 t) - \theta(t) \sin(\omega_0 t) \right)
+\end{align*}
+Hence, a narrow band FM signal can be generated as in \cref{fig:narrow_band_FM_transmitter}.
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node [block] (integrator) at (2,0) {$\int\limits_{-\infty}^{t}$};
+		\node [mixer] (mixer_sin) at (4,0) {};
+		\node [mixer] (mixer_cos) at (6,0) {};
+		\draw [stealth-] (integrator.west) -- ++(-1,0) node [left] {$m(t)$};
+		\draw [-stealth] (integrator.east) -- (mixer_sin.west);
+		\draw [-stealth] (mixer_sin.east) -- (mixer_cos.west);
+		\draw [-stealth] (mixer_cos.east) -- ++(1,0) node [right] {$v(t)$};
+		\draw (mixer_sin.south) -- ++(0,-1) node [below] {$-A \sin(\omega_0 t)$};
+		\draw (mixer_cos.south) -- ++(0,-1) node [below] {$A \cos(\omega_0 t)$};
+	\end{tikzpicture}
+	\caption{Narrow Band FM Transmitter}
+	\label{fig:narrow_band_FM_transmitter}
+\end{figure}
+Similarly, a receiver can be designed as in \cref{fig:narrow_band_FM_receiver}.
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\node [block] (differentiator) at (2,0) {$\dod{}{t}$};
+		\node [mixer] (envelope_detector) at (4,0) {};
+		\draw [stealth-] (differentiator.west) -- ++(-1,0) node [left] {$v(t)$};
+		\draw [-stealth] (differentiator.east) -- (envelope_detector.west);
+		\draw [-stealth] (envelope_detector.east) -- ++(1,0) node [right] {$\tilde{m}(t)$};
+	\end{tikzpicture}
+	\caption{Narrow Band FM Receiver}
+	\label{fig:narrow_band_FM_receiver}
+\end{figure}
+
+\subsection{Non Narrow Band FM Generation}
+
+\begin{figure}[H]
+	\centering
+	\begin{adjustbox}{max width=\columnwidth}
+	\begin{tikzpicture}
+		\node [block] (spectrum_compressor) at (2,0) {$\frac{1}{M}$};
+		\node [block] (NBFM) at (6,0) {NBFM transmitter};
+		\node [block] (multiplication) at (12,0) {$M$ fold frequency multiplication};
+		\draw [stealth-] (spectrum_compressor.west) -- ++(-1,0) node [left] {$m(t)$};
+		\draw [-stealth] (spectrum_compressor.east) -- (NBFM.west);
+		\draw [-stealth] (NBFM.east) -- (multiplication.west);
+		\draw [-stealth] (multiplication.east) -- ++(1,0) node [right] {$v(t)$};
+	\end{tikzpicture}
+	\end{adjustbox}
+	\caption{Non Narrow Band FM Transmitter}
+	\label{fig:non_narrow_band_FM_transmitter}
 \end{figure}
 
 \end{document}
