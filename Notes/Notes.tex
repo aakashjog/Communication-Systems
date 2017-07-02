@@ -337,7 +337,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\begin{align*}
 		Y(\omega) &= X^*(\omega)
 	\end{align*}
-	\label{thm:time_conjugation}
+	\label{thm:time_conjugation_and_reversal}
 \end{theorem}
 
 \begin{theorem}[Convolution in time]
@@ -758,7 +758,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\begin{align*}
 		S_{Y Y}(\omega) &= S_{X X}(-\omega)
 	\end{align*}
-	\label{thm:time_reversal_for_stochastic_signal}
+	\label{thm:time_conjugation_for_stochastic_signal}
 \end{theorem}
 
 \begin{proof}
@@ -792,7 +792,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\begin{align*}
 		S_{Y Y}(\omega) &= S_{X X}(\omega)
 	\end{align*}
-	\label{thm:time_reversal_for_stochastic_signal}
+	\label{thm:time_conjugation_and_reversal_for_stochastic_signal}
 \end{theorem}
 
 \begin{theorem}[Convolution in time for stochastic signal]
@@ -1230,7 +1230,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 		B &< \frac{\omega_s}{2}
 	\end{align*}
 	where $X(\omega)$ is zero outside $(-B,B)$.
-	\label{thm:Fourier_transform_of_signal_modulated_by_direct_multiplication_PAM}
+	\label{thm:Fourier_transform_of_signal_modulated_by_flat_sampling_PAM}
 \end{theorem}
 
 \begin{proof}
@@ -1726,7 +1726,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\end{align*}
 	where $\mu \in (0,255]$.\\
 	Then, $y$ is said to be obtained by transformation of $x$ with the $\mu$ law.\\
-	Hence, the transformation function $g(x)$ is as in \cref{fig:mu_law}.
+	Hence, the transformation function $g(x)$ is as in \cref{fig:transformation_function_for_mu_law}.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width = 0.8\textwidth]{./Plots/mu_law.pdf}
@@ -1807,7 +1807,7 @@ Tel: \href{tel:+97236406120}{+972 3 640 6120}\\
 	\end{align*}
 	where $A > 1$.\\
 	Then, $y$ is said to be obtained by transformation of $x$ with the $A$ law.\\
-	Hence, the transformation function $g(x)$ is as in \cref{fig:mu_law}.
+	Hence, the transformation function $g(x)$ is as in \cref{fig:transformation_function_for_A_law}.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width = 0.8\textwidth]{./Plots/A_law.pdf}
@@ -2056,7 +2056,7 @@ This problem can be reduced by using Gray coding, and the error is limited to a 
 	\end{align*}
 	is called the raised cosine family of pulses.
 	$\rho \in [0,1]$ is called the rolloff factor of the pulse, chosen according to the requirements.
-	Hence, the frequency domain representation of the pulse is as in \cref{fig:raised_cosine_pulse_in_frequency_domain}.
+	Hence, the frequency domain representation of the pulse is as in \cref{fig:raised_cosine_pulses_in_frequency_domain}.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width = 0.8\textwidth]{./Plots/raised_cosine_pulses_in_frequency.pdf}
@@ -3293,6 +3293,7 @@ Hence, let the modulation indices be defined as in \cref{def:modulation_indices_
 		\mu &= \frac{1}{2} \left( \mu_+ + \mu_- \right)\\
 		&= \frac{1}{2} \left( \max_{t} m(t) - \min_{t} m(t) \right)
 	\end{align*}
+	\label{def:modulation_indices_for_AM}
 \end{definition}
 
 Hence,
